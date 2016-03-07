@@ -52,7 +52,16 @@ class SupplierController extends \Think\Controller{
     public function edit($id){
         //提交
         if(IS_POST){
-            
+            //验证合法性
+            if($this->_model->create() === false){
+                $this->error($this->_model->getError());
+            }
+            //执行保存操作失败
+            if($this->_model->save() === false){
+                $this->error($this->_model->getError());
+            }
+            //成功跳转
+            $this->success('修改成功',U('index'));
         }else{
         //展示
             //得到数据表中的数据
