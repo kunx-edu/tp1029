@@ -16,36 +16,37 @@
 </h1>
     <div style="clear:both"></div>
 <div class="main-div">
-    <form method="post" action="__GROUP__/Brand/brandAdd"enctype="multipart/form-data" >
+    <form method="post" action="{:U('')}">
         <table cellspacing="1" cellpadding="3" width="100%">
             <tr>
                 <td class="label">供货商名称</td>
                 <td>
-                    <input type="text" name="name" maxlength="60" value="" />
+                    <input type="text" name="name" maxlength="60" value="{$row.name}" />
                     <span class="require-field">*</span>
                 </td>
             </tr>
             <tr>
                 <td class="label">供货商描述</td>
                 <td>
-                    <textarea  name="intro" cols="60" rows="4"  ></textarea>
+                    <textarea  name="intro" cols="60" rows="4"  >{$row.intro}</textarea>
                 </td>
             </tr>
             <tr>
                 <td class="label">排序</td>
                 <td>
-                    <input type="text" name="sort" maxlength="40" size="15" value="50" />
+                    <input type="text" name="sort" maxlength="40" size="15" value="{$row.sort|default=50}" />
                 </td>
             </tr>
             <tr>
                 <td class="label">是否显示</td>
                 <td>
-                    <input type="radio" name="status" value="1" checked="checked" /> 是
+                    <input type="radio" name="status" value="1" /> 是
                     <input type="radio" name="status" value="0"  /> 否
                 </td>
             </tr>
             <tr>
                 <td colspan="2" align="center"><br />
+                    <input type='hidden' name="id" value='{$row.id}'/>
                     <input type="submit" class="button" value=" 确定 " />
                     <input type="reset" class="button" value=" 重置 " />
                 </td>
@@ -57,5 +58,12 @@
 <div id="footer">
 共执行 1 个查询，用时 0.018952 秒，Gzip 已禁用，内存占用 2.197 MB<br />
 版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。</div>
+    <script type="text/javascript" src="__JS__/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            //回显是否显示功能
+            $(':input[name=status]').val([{$row.status|default=1}]);
+        });
+    </script>
 </body>
 </html>
