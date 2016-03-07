@@ -20,7 +20,9 @@ class SupplierController extends \Think\Controller{
      */
     public function index(){
 //        $model = D('Supplier');
-        $this->assign('rows',$this->_model->select());
+        $cond = array();
+        $page = I('get.p',1);
+        $this->assign($this->_model->getPageResult($cond,$page));
         $this->display();
     }
     
@@ -92,10 +94,11 @@ class SupplierController extends \Think\Controller{
      * @param type $status
      */
     public function changeStatus($id,$status=-1){
-        $cond = array(
-            'id'=>$id,
-        );
-        if($this->_model->where($cond)->setField('status',$status)===false){
+//        $cond = array(
+//            'id'=>$id,
+//        );
+//        if($this->_model->where($cond)->setField('status',$status)===false){
+        if($this->_model->changeStatus($id,$status)===false){
             $this->error($this->_model->getError());
         }else{
             if($status == -1){
