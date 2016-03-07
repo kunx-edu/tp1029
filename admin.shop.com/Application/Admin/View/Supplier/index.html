@@ -36,10 +36,10 @@
                 <td class="first-cell">{$row.name}</td>
                 <td align="center">{$row.intro}</td>
                 <td align="center">{$row.sort}</td>
-                <td align="center"><img src="__IMG__/{$row.status}.gif" /></td>
+                <td align="center"><img src="__IMG__/{$row.status}.gif" onclick="change_status({$row.id},1-{$row.status})"/></td>
                 <td align="center">
                     <a href="{:U('edit',array('id'=>$row['id']))}" title="编辑">编辑</a> |
-                    <a href="{:U('delete',array('id'=>$row['id']))}" title="移除">移除</a> 
+                    <a href="{:U('changeStatus',array('id'=>$row['id']))}" title="移除">移除</a> 
                 </td>
             </tr>
             </foreach>
@@ -69,5 +69,11 @@
 <div id="footer">
 共执行 3 个查询，用时 0.021251 秒，Gzip 已禁用，内存占用 2.194 MB<br />
 版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。</div>
+<script type="text/javascript">
+    function change_status(id,status){
+        url='{:U("changeStatus")}?id=' + id + '&status=' + status;
+        location.href=url;
+    }
+</script>
 </body>
 </html>

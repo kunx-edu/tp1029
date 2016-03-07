@@ -70,4 +70,40 @@ class SupplierController extends \Think\Controller{
             $this->display('add');
         }
     }
+    
+//    /**
+//     * 执行供货商的删除操作,其实就是将status字段改为-1
+//     * @param type $id
+//     */
+//    public function delete($id){
+//        $cond = array(
+//            'id'=>$id,
+//        );
+//        if($this->_model->where($cond)->setField('status',-1)===false){
+//            $this->error($this->_model->getError());
+//        }else{
+//            $this->success('删除成功',U('index'));
+//        }
+//    }
+    
+    /**
+     * 修改供货商状态,包括逻辑删除
+     * @param type $id
+     * @param type $status
+     */
+    public function changeStatus($id,$status=-1){
+        $cond = array(
+            'id'=>$id,
+        );
+        if($this->_model->where($cond)->setField('status',$status)===false){
+            $this->error($this->_model->getError());
+        }else{
+            if($status == -1){
+                $msg = '删除成功';
+            }else{
+                $msg = '修改成功';
+            }
+            $this->success($msg,U('index'));
+        }
+    }
 }
