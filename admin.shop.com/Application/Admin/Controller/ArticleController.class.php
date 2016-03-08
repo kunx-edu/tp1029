@@ -74,7 +74,7 @@ class ArticleController extends \Think\Controller {
         } else {
             //展示
             //得到数据表中的数据
-            $row = $this->_model->find($id);
+            $row = $this->_model->getArticle($id);
             $this->assign('row', $row);
             //获取所有文章分类
             $this->assign('article_categories',D('ArticleCategory')->select());

@@ -9,6 +9,9 @@ class ArticleModel extends \Think\Model {
         array('article_category_id', 'require', '文章分类不能为空'),
     );
 
+    protected $_auto = array(
+        array('inputtime','time',self::MODEL_INSERT,'function'),
+    );
     /**
      * 获取列表
      * 分页
@@ -41,7 +44,10 @@ class ArticleModel extends \Think\Model {
         return $this->save($data);
     }
 
-    
+    /**
+     * 添加文章,并将文章详细信息保存到文章详情表.
+     * @return boolean
+     */
     public function addArticle(){
         if(($id = $this->add()) === false){
             $this->error = '添加文章失败';
@@ -77,5 +83,18 @@ class ArticleModel extends \Think\Model {
             return false;
         }
         return true;
+    }
+    
+    
+    /**
+     * 获取文章信息,包括文章详细内容.
+     * @param integer $id 文章id
+     * @return array
+     */
+    public function getArticle($id){
+        $row = $this->find($id);
+        $content = M('ArticleContent')->getFieldByArticleId($id,'content');
+        $row['content'] = $content;
+        return $row;
     }
 }
