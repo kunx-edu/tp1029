@@ -22,8 +22,9 @@ class ArticleModel extends \Think\Model {
         $page      = new \Think\Page($count, C('PAGE_SIZE'));
         $page->setConfig('theme', '%HEADER% %FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END%');
         $page_html = $page->show();
-
-        return array('page_html' => $page_html, 'rows' => $rows);
+        
+        $article_categories = D('ArticleCategory')->getField('id,name');
+        return array('page_html' => $page_html, 'rows' => $rows,'article_categories'=>$article_categories);
     }
 
     /**

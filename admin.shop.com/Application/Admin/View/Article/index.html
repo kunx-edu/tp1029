@@ -27,6 +27,7 @@
         <table cellpadding="3" cellspacing="1">
             <tr>
                 <th>文章名称</th>
+                <th>文章分类</th>
                 <th>文章简介</th>
                 <th>文章排序</th>
                 <th>是否显示</th>
@@ -34,8 +35,9 @@
             </tr>
             <foreach name="rows" item="row">
             <tr>
-                <td class="first-cell">{$row.name}</td>
-                <td align="center">{$row.intro}</td>
+                <td class="first-cell" align="center">{$row.name}</td>
+                <td align="center">{$article_categories[$row[article_category_id]]}</td>
+                <td align="center" style="width: 500px;">{$row.intro|mb_substr=###,0,40,"UTF-8"}</td>
                 <td align="center">{$row.sort}</td>
                 <td align="center"><img src="__IMG__/{$row.status}.gif" onclick="change_status({$row.id},1-{$row.status})"/></td>
                 <td align="center">
