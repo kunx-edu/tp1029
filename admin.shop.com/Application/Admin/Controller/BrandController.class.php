@@ -2,20 +2,20 @@
 
 namespace Admin\Controller;
 
-class SupplierController extends \Think\Controller {
+class BrandController extends \Think\Controller {
 
     private $_model = null;
 
     protected function _initialize() {
         $meta_titles  = array(
-            'index'  => '供货商管理',
-            'add'    => '添加供货商',
-            'edit'   => '修改供货商',
-            'delete' => '删除供货商',
+            'index'  => '品牌管理',
+            'add'    => '添加品牌',
+            'edit'   => '修改品牌',
+            'delete' => '删除品牌',
         );
-        $meta_title   = isset($meta_titles[ACTION_NAME]) ? $meta_titles[ACTION_NAME] : '供货商管理';
+        $meta_title   = isset($meta_titles[ACTION_NAME]) ? $meta_titles[ACTION_NAME] : '品牌管理';
         $this->assign('meta_title', $meta_title);
-        $this->_model = D('Supplier'); //由于所有的操作都需要用到模型,我们在初始化方法中创建
+        $this->_model = D('Brand'); //由于所有的操作都需要用到模型,我们在初始化方法中创建
     }
 
     /**

@@ -2,20 +2,20 @@
 
 namespace Admin\Controller;
 
-class SupplierController extends \Think\Controller {
+class ArticleCategoryController extends \Think\Controller {
 
     private $_model = null;
 
     protected function _initialize() {
         $meta_titles  = array(
-            'index'  => '供货商管理',
-            'add'    => '添加供货商',
-            'edit'   => '修改供货商',
-            'delete' => '删除供货商',
+            'index'  => '文章类型管理',
+            'add'    => '添加文章类型',
+            'edit'   => '修改文章类型',
+            'delete' => '删除文章类型',
         );
-        $meta_title   = isset($meta_titles[ACTION_NAME]) ? $meta_titles[ACTION_NAME] : '供货商管理';
+        $meta_title   = isset($meta_titles[ACTION_NAME]) ? $meta_titles[ACTION_NAME] : '文章类型管理';
         $this->assign('meta_title', $meta_title);
-        $this->_model = D('Supplier'); //由于所有的操作都需要用到模型,我们在初始化方法中创建
+        $this->_model = D('ArticleCategory'); //由于所有的操作都需要用到模型,我们在初始化方法中创建
     }
 
     /**
