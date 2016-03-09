@@ -28,7 +28,7 @@ class BrandController extends \Think\Controller {
         );
         $page    = I('get.p', 1);
         $this->assign($this->_model->getPageResult($cond, $page));
-        $this->assign('keyword',$keyword);
+        $this->assign('keyword', $keyword);
         $this->display();
     }
 
@@ -42,8 +42,11 @@ class BrandController extends \Think\Controller {
             if ($this->_model->create() === false) {
                 $this->error($this->_model->getError());
             }
+
+
+            $logo = $this->_uploadLogo();
             //执行数据插入
-            if ($this->_model->add() === false) {
+            if ($this->_model->addBrand($logo) === false) {
                 $this->error($this->_model->getError());
             }
             $this->success('添加成功', U('index'));
@@ -64,7 +67,8 @@ class BrandController extends \Think\Controller {
                 $this->error($this->_model->getError());
             }
             //执行保存操作失败
-            if ($this->_model->save() === false) {
+            $logo = $this->_uploadLogo();
+            if ($this->_model->updateBrand($logo) === false) {
                 $this->error($this->_model->getError());
             }
             //成功跳转
@@ -94,6 +98,25 @@ class BrandController extends \Think\Controller {
             }
             $this->success($msg, U('index'));
         }
+    }
+
+    /**
+     * 执行的具体的文件上传
+     * @return string 文件的路径
+     */
+    private function _uploadLogo() {
+        //上传文件
+        $config = C('UPLOAD_SETTING');
+        $upload = new \Think\Upload($config);
+        $file   = empty($_FILES['logo']['tmp_name']) ? array() : $_FILES['logo'];
+        //如果文件不为空才执行上传操作
+        $logo   = '';
+        if ($file) {
+            if ($file_info = $upload->uploadOne($file)) {
+                $logo = $file_info['savepath'] . $file_info['savename'];
+            }
+        }
+        return $logo;
     }
 
 }
