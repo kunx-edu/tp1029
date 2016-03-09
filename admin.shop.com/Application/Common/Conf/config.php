@@ -9,7 +9,7 @@ return array(
         '__IMG__'        => DOMAIN . '/Public/images',
         '__UPLOAD_URL__' => DOMAIN . '/Uploads', //上传文件的访问路径
         '__UPLOADIFY__'  => DOMAIN . '/Public/ext/uploadify', //uploadify插件路径
-        '__LAYER__'  => DOMAIN . '/Public/ext/layer', //uploadify插件路径
+        '__LAYER__'      => DOMAIN . '/Public/ext/layer', //uploadify插件路径
     ),
     'SHOW_PAGE_TRACE'   => true, //开启页面调试
     /* 数据库设置 */
@@ -38,7 +38,20 @@ return array(
         'replace'      => false, //存在同名是否覆盖
         'hash'         => true, //是否生成hash编码
         'callback'     => false, //检测文件是否存在回调，如果存在返回文件信息数组
-        'driver'       => '', // 文件上传驱动
-        'driverConfig' => array(), // 上传驱动配置
+        'driver'       => 'Qiniu', // 文件上传驱动
+//        'driver'       => 'Upyun', // 文件上传驱动
+        'driverConfig' => array(
+            'secrectKey' => 'KBYoPnqTbgX4a65rXNI9f-6_kCKwwnHMSnLOGLNk', //七牛服务器
+            'accessKey'  => 'qJHe4wo24q6X6AWSXsv-syl8PkhHjo6i5WXc-to5', //七牛用户
+            'domain'     => '7xrol9.com1.z0.glb.clouddn.com', //七牛密码
+            'bucket'     => 'tp1029', //空间名称
+            'timeout'    => 300, //超时时间
+//            'host'       => 'v0.api.upyun.com', //又拍云服务器
+//            'username'   => 'tp1029', //又拍云用户
+//            'password'   => '123456!@#', //又拍云密码
+//            'bucket'     => 'tp1029', //空间名称
+//            'timeout'    => 90, //超时时间
+        ), // 上传驱动配置
     ),
+     'TMPL_CACHE_ON' => false,
 );

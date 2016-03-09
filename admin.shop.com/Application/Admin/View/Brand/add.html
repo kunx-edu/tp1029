@@ -39,7 +39,7 @@
                             <input type="file" id="file_upload"/>
                             <notempty name="row.logo">
                                 <br />
-                                <img src="__UPLOAD_URL__/{$row.logo}"/>
+                                <img src="{$row.logo}"/>
                             </notempty>
                         </td>
                     </tr>
@@ -82,12 +82,14 @@
                     'uploader': '{:U("Upload/index")}',
                     'fileObjName': 'logo',
                     'buttonText': '上传',
+                    'multi':true,
                     'overrideEvents': ['onUploadSuccess', 'onUploadError'],
                     'onUploadError': function (file, errorCode, errorMsg, errorString) {
                         console.debug(arguments);
                     },
                     'onUploadSuccess': function (file, data, response) {
                         data = $.parseJSON(data);
+                        console.debug(data.file_url);
                         if(data.status){
                             $('#logo').val(data.file_url);
                             layer.msg('上传成功',{icon:6,time:1000});

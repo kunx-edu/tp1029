@@ -34,7 +34,7 @@
             </tr>
             <foreach name="rows" item="row">
             <tr>
-                <td><img src="__UPLOAD_URL__/{$row.logo}" style="height:30px"/>{$row.name}</td>
+                <td><img src="{$row.logo}-80" />{$row.name}</td>
                 <td align="center">{$row.intro}</td>
                 <td align="center">{$row.sort}</td>
                 <td align="center"><img src="__IMG__/{$row.status}.gif" onclick="change_status({$row.id},1-{$row.status})"/></td>

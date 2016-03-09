@@ -26,16 +26,18 @@ class UploadController extends \Think\Controller {
         if ($file) {
             if ($file_info = $upload->uploadOne($file)) {
                 $logo = $file_info['savepath'] . $file_info['savename'];
-                $status = 1;//成功了
+//                $logo   = $file_info['url'];//使用七牛云得到的地址
+                $status = 1; //成功了
             } else {
-                $msg = $upload->getError();
-                $status = false;//失败了
+                $msg    = $upload->getError();
+                $status = false; //失败了
             }
         }
         $data = array(
-            'file_url' => $logo,//文件的地址
-            'msg'      => $msg,//错误消息
-            'status'    => $status,//状态
+            'file_url' => $logo, //文件的地址
+            'msg'      => $msg, //错误消息
+            'status'   => $status, //状态
+            'file_info'=>$file_info,
         );
 //        echo json_encode($data);
         $this->ajaxReturn($data);
