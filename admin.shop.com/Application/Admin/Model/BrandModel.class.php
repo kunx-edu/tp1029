@@ -46,29 +46,4 @@ class BrandModel extends \Think\Model {
         return $this->save($data);
     }
     
-    /**
-     * 新建品牌,保存图片
-     * @param type $logo
-     * @return type
-     */
-    public function addBrand($logo){
-        $this->data['logo'] = $logo;
-        if(empty($logo)){
-            unset($this->data['logo']);
-        }
-        return $this->add();
-    }
-    /**
-     * 修改品牌,包括图片
-     * @param type $logo
-     * @return type
-     */
-    public function updateBrand($logo){
-        $this->data['logo'] = $logo;
-        if(empty($logo)){
-            unset($this->data['logo']);
-        }
-        return $this->save();
-    }
-
 }

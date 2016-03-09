@@ -98,24 +98,4 @@ class BrandController extends \Think\Controller {
             $this->success($msg, U('index'));
         }
     }
-
-    /**
-     * 执行的具体的文件上传
-     * @return string 文件的路径
-     */
-    private function _uploadLogo() {
-        //上传文件
-        $config = C('UPLOAD_SETTING');
-        $upload = new \Think\Upload($config);
-        $file   = empty($_FILES['logo']['tmp_name']) ? array() : $_FILES['logo'];
-        //如果文件不为空才执行上传操作
-        $logo   = '';
-        if ($file) {
-            if ($file_info = $upload->uploadOne($file)) {
-                $logo = $file_info['savepath'] . $file_info['savename'];
-            }
-        }
-        return $logo;
-    }
-
 }
