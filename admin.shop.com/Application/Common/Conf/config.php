@@ -9,8 +9,9 @@ return array(
         '__IMG__'        => DOMAIN . '/Public/images',
         '__UPLOAD_URL__' => DOMAIN . '/Uploads', //上传文件的访问路径
         '__UPLOADIFY__'  => DOMAIN . '/Public/ext/uploadify', //uploadify插件路径
+        '__LAYER__'  => DOMAIN . '/Public/ext/layer', //uploadify插件路径
     ),
-//    'SHOW_PAGE_TRACE'   => true, //开启页面调试
+    'SHOW_PAGE_TRACE'   => true, //开启页面调试
     /* 数据库设置 */
     'DB_TYPE'           => 'mysql', // 数据库类型
     'DB_HOST'           => '127.0.0.1', // 服务器地址
@@ -25,7 +26,7 @@ return array(
     'DB_CHARSET'        => 'utf8', // 数据库编码默认采用utf8
     'PAGE_SIZE'         => 3, //每页显示多少个
     'UPLOAD_SETTING'    => array(
-        'mimes'        => array('image/jpeg', 'image/png', 'image/gif'), //允许上传的文件MiMe类型
+//        'mimes'        => array('image/jpeg', 'image/png', 'image/gif'), //允许上传的文件MiMe类型
         'maxSize'      => 1048576, //上传的文件大小限制 (0-不做限制)
         'exts'         => array('jpg', 'jpeg', 'png', 'gif'), //允许上传的文件后缀
         'autoSub'      => true, //自动子目录保存文件

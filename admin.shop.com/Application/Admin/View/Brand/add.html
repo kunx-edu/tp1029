@@ -35,7 +35,7 @@
                     <tr>
                         <td class="label">LOGO</td>
                         <td>
-                            <input type="hidden" name="logo" value="" id="logo"/>
+                            <input type="hidden" name="logo" value="{$row.logo}" id="logo"/>
                             <input type="file" id="file_upload"/>
                             <notempty name="row.logo">
                                 <br />
@@ -70,8 +70,9 @@
         <div id="footer">
             共执行 1 个查询，用时 0.018952 秒，Gzip 已禁用，内存占用 2.197 MB<br />
             版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。</div>
-        <script type="text/javascript" src="__JS__/jquery.min.js"></script>
+        <js href="__JS__/jquery.min.js"/>
         <js href="__UPLOADIFY__/jquery.uploadify.min.js"/>
+        <js href="__LAYER__/layer.js"/>
         <script type="text/javascript">
             $(function () {
                 //回显是否显示功能
@@ -89,10 +90,10 @@
                         data = $.parseJSON(data);
                         if(data.status){
                             $('#logo').val(data.file_url);
+                            layer.msg('上传成功',{icon:6,time:1000});
                         }else{
-                            alert(data.msg);
+                            layer.msg(data.msg,{icon:5,time:1000});
                         }
-//                        console.debug(data);
                     }
                 });
             });
