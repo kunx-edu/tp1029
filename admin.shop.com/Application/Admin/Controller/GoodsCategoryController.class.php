@@ -29,9 +29,17 @@ class GoodsCategoryController extends \Think\Controller {
      */
     public function add() {
         if (IS_POST) {
-            dump(I('post.'));
+            //验证数据
+            if($this->_model->create() === false){
+                $this->error($this->_model->getError());
+            }
+            //添加数据
+            if($this->_model->addCategory() === false){
+                $this->error($this->_model->getError());
+            }
+            //成功后跳转
+            $this->success('添加分类成功',U('index'));
         } else {
-
             //取出所有的分类
             $rows = $this->_model->getList();
             foreach ($rows as $key => $value) {
@@ -40,6 +48,34 @@ class GoodsCategoryController extends \Think\Controller {
             $rows = json_encode($rows);
             $this->assign('rows', $rows); //将所有分类传递给视图
             $this->display();
+        }
+    }
+    
+    /**
+     * 修改分类.
+     * @param integer $id
+     */
+    public function edit($id){
+        if(IS_POST){
+            //验证数据是否合法
+            if($this->_model->create() === false){
+                $this->error($this->_model->getError());
+            }
+            
+            if($this->_model->updateCategory() === false){
+                $this->error($this->_model->getError());
+            }
+            $this->success('修改分类成功',U('index'));
+        }else{
+            //取出所有的分类
+            $rows = $this->_model->getList();
+            foreach ($rows as $key => $value) {
+                $rows[$key]['pId'] = $value['parent_id'];
+            }
+            $rows = json_encode($rows);
+            $this->assign('rows', $rows); //将所有分类传递给视图
+            $this->assign('row', $this->_model->find($id)); //将所有分类传递给视图
+            $this->display('add');
         }
     }
 

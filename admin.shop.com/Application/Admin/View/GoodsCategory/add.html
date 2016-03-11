@@ -22,7 +22,7 @@
                     <tr>
                         <td class="label">分类名称:</td>
                         <td>
-                            <input type='text' name='cat_name' maxlength="20" value='' size='27' /> <font color="red">*</font>
+                            <input type='text' name='name' maxlength="20" value='{$row.name}' size='27' /> <font color="red">*</font>
                         </td>
                     </tr>
                     <tr>
@@ -36,31 +36,25 @@
                     <tr>
                         <td class="label">排序:</td>
                         <td>
-                            <input type="text" name='sort_order'  value="50" size="15" />
+                            <input type="text" name='sort'  value="{$row.sort|default=50}" size="15" />
                         </td>
                     </tr>
                     <tr>
                         <td class="label">是否显示:</td>
                         <td>
-                            <input type="radio" name="is_show" value="1"  checked="true"/> 是 
-                            <input type="radio" name="is_show" value="0"  /> 否
+                            <input type="radio" name="status" value="1" /> 是 
+                            <input type="radio" name="status" value="0" /> 否
                         </td>
                     </tr>
                     <tr>
-                        <td class="label">导航显示:</td>
+                        <td class="label">简介:</td>
                         <td>
-                            <input type="radio" name="is_nav" value="1"  checked="true"/> 是 
-                            <input type="radio" name="is_nav" value="0"  /> 否
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="label">关键字:</td>
-                        <td>
-                            <input type="text" name="keywords" value='' size="50">
+                            <input type="text" name="intro" value='{$row.intro}' size="50">
                         </td>
                     </tr>
                 </table>
                 <div class="button-div">
+                    <input type="hidden" name="id" value="{$row.id}" />
                     <input type="submit" value=" 确定 " />
                     <input type="reset" value=" 重置 " />
                 </div>
@@ -93,8 +87,21 @@
             var zNodes = {$rows};
 
             $(document).ready(function () {
+                //默认选中[是否显示]
+                $(':input[name=status]').val([{$row.status|default=1}]);
+                
                 //将html节点初始化成ztree的效果
                 var ztree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+                
+                
+                //编辑页面的时候,找到父级节点,并且回显出来
+                <notempty name='row.id'>
+                    var parent_node = ztree_obj.getNodeByParam('id',{$row.parent_id});
+                    ztree_obj.selectNode(parent_node);
+                    $('#parent_id').val(parent_node.id);
+                    $('#parent_name').val(parent_node.name);
+                </notempty>
+        
                 //展开所有的ztree节点
                 ztree_obj.expandAll(true);
             });
