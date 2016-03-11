@@ -53,6 +53,7 @@ class GoodsCategoryModel extends \Think\Model{
         $cond = array(
             'parent_id'=>$request_data['parent_id'],
             'name'=>$request_data['name'],
+            'id'=>array('neq',$request_data['id']),
         );
         //查看是否有记录
         if($this->where($cond)->count()){
