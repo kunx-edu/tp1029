@@ -2,8 +2,15 @@
 namespace Admin\Model;
 
 class GoodsCategoryModel extends \Think\Model{
+    /**
+     * 获取分类列表
+     * @return type
+     */
     public function getList(){
-        return $this->order('lft asc')->select();
+        $cond = array(
+            'status'=>array('gt',-1),
+        );
+        return $this->where($cond)->order('lft asc')->select();
     }
     
     /**
@@ -51,5 +58,42 @@ class GoodsCategoryModel extends \Think\Model{
         }
         
         return true;
+    }
+    
+    /**
+     * 逻辑删除分类,同时会删除所有的后代分类
+     * @param integer $id
+     * @return interger|false
+     */
+    public function deleteCategory($id){
+        //以下使用nestedsets删除节点,会执行物理删除,并且会重新计算各节点.
+//        //创建具体的sql执行的对象
+//            $db = D('DbMysql','Logic');
+//            $table_name = $this->trueTableName;//获取数据表的名字
+//            //创建用于生成sql结构的对象
+//            $nested_sets = new \Admin\Service\NestedSetsService($db, $table_name, 'lft', 'rght', 'parent_id', 'id', 'level');
+//            $rst = $nested_sets->delete($id);
+//            var_dump($rst);
+//            exit;
+        
+        
+        //逻辑删除
+        /**
+         * 应当将所有的后代节点以及其自身找出来并且更改状态为-1
+         * 获取当前分类的左右节点
+         * 查询出>=lft <=rght的节点
+         */
+        $row = $this->field('lft,rght')->find($id);
+        //update goods_category set status=-1 where lft>=17 and rght<=25
+        $data = array(
+            'status'=>-1,
+            'name'=>array('exp','concat(`name`,"_del")'),
+        );
+        //拼接条件,所有的后代分类左节点都>当前的左节点,所有的右节点都<当前的右节点
+        $cond = array(
+            'lft'=>array('egt',$row['lft']),
+            'rght'=>array('elt',$row['rght']),
+        );
+        return $this->where($cond)->save($data);
     }
 }

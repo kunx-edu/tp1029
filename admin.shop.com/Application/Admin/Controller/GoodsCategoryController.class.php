@@ -78,5 +78,12 @@ class GoodsCategoryController extends \Think\Controller {
             $this->display('add');
         }
     }
+    
+    public function delete($id){
+        if($this->_model->deleteCategory($id)===false){
+            $this->error('删除分类失败');
+        }
+        $this->success('删除分类成功',U('index'));
+    }
 
 }
