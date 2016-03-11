@@ -39,7 +39,7 @@
                             <input type="file" id="file_upload"/>
                             <notempty name="row.logo">
                                 <br />
-                                <img src="{$row.logo}"/>
+                                <img src="{$row.logo}" id="logo_preview"/>
                             </notempty>
                         </td>
                     </tr>
@@ -92,6 +92,7 @@
                         console.debug(data.file_url);
                         if(data.status){
                             $('#logo').val(data.file_url);
+                            $('#logo_preview').attr('src',data.file_url);
                             layer.msg('上传成功',{icon:6,time:1000});
                         }else{
                             layer.msg(data.msg,{icon:5,time:1000});

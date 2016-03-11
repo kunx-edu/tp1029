@@ -25,8 +25,8 @@ class UploadController extends \Think\Controller {
 
         if ($file) {
             if ($file_info = $upload->uploadOne($file)) {
-                $logo = $file_info['savepath'] . $file_info['savename'];
-//                $logo   = $file_info['url'];//使用七牛云得到的地址
+//                $logo = $file_info['savepath'] . $file_info['savename'];
+                $logo   = $file_info['url'];//使用七牛云得到的地址
                 $status = 1; //成功了
             } else {
                 $msg    = $upload->getError();

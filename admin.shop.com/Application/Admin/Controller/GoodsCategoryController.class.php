@@ -1,30 +1,46 @@
 <?php
 
-
 namespace Admin\Controller;
 
-class GoodsCategoryController extends \Think\Controller{
-    public function index(){
-//       $this->display(); 
+class GoodsCategoryController extends \Think\Controller {
+
+    private $_model = null;
+
+    protected function _initialize() {
+        $meta_titles  = array(
+            'index'  => '分类管理',
+            'add'    => '添加分类',
+            'edit'   => '修改分类',
+            'delete' => '删除分类',
+        );
+        $meta_title   = isset($meta_titles[ACTION_NAME]) ? $meta_titles[ACTION_NAME] : '分类管理';
+        $this->assign('meta_title', $meta_title);
+        $this->_model = D('GoodsCategory'); //由于所有的操作都需要用到模型,我们在初始化方法中创建
     }
-    
+
+    public function index() {
+        $rows = $this->_model->getList();
+        $this->assign('rows', $rows); //将所有分类传递给视图
+        $this->display();
+    }
+
     /**
      * 添加分类
      */
-    public function add(){
-        if(IS_POST){
+    public function add() {
+        if (IS_POST) {
             dump(I('post.'));
-        }else{
-            
+        } else {
+
             //取出所有的分类
-            $model = D('GoodsCategory');
-            $rows = $model->getList();
-            foreach($rows as $key=>$value){
+            $rows = $this->_model->getList();
+            foreach ($rows as $key => $value) {
                 $rows[$key]['pId'] = $value['parent_id'];
             }
             $rows = json_encode($rows);
-            $this->assign('rows',$rows);//将所有分类传递给视图
+            $this->assign('rows', $rows); //将所有分类传递给视图
             $this->display();
         }
     }
+
 }
