@@ -18,6 +18,17 @@ class GoodsCategoryModel extends \Think\Model{
      * @return boolean
      */
     public function addCategory() {
+        //添加分类的时候判断指定的父级分类下有没有同名分类
+        $cond = array(
+            'parent_id'=>$this->data['parent_id'],
+            'name'=>$this->data['name'],
+        );
+        //查看是否有记录
+        if($this->where($cond)->count()){
+            $this->error = '已经存在同名分类';
+            return false;
+        }
+        unset($this->data['id']);
         //创建具体的sql执行的对象
         $db = D('DbMysql','Logic');
         $table_name = $this->trueTableName;//获取数据表的名字
@@ -38,6 +49,19 @@ class GoodsCategoryModel extends \Think\Model{
      */
     public function updateCategory(){
         $request_data = $this->data;
+        //编辑分类的时候判断指定的父级分类下有没有同名分类
+        $cond = array(
+            'parent_id'=>$request_data['parent_id'],
+            'name'=>$request_data['name'],
+        );
+        //查看是否有记录
+        if($this->where($cond)->count()){
+            $this->error = '已经存在同名分类';
+            return false;
+        }
+        
+        
+        
         $old_parent_id = $this->getFieldById($request_data['id'],'parent_id');
         //由于如果没有改变父级分类,moveUnder将会返回false,所以我们先判断是否改变了父级分类
         if($old_parent_id !== $request_data['parent_id']){
@@ -52,6 +76,7 @@ class GoodsCategoryModel extends \Think\Model{
             }
             
         }
+        
         if($this->save()===false){
             $this->error = '修改分类失败';
             return false;
