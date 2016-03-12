@@ -143,11 +143,12 @@
                             <td class="label">商品相册：</td>
                             <td>
                                 <div class="upload-img-box">
+                                    <foreach name='row.paths' item='path'>
                                     <div class="upload-item">
-                                        <img src="__IMG__/goods1.jpg"/>
-                                        <a href="#">×</a>
-                                        <input type='hidden' name='' value='http://qinmiu/faa.jpg'/>
+                                        <img src="{$path.path}-150"/>
+                                        <a href="#" data='{$path.id}' class='delete_gallery'>×</a>
                                     </div>
+                                    </foreach>
 
                                 </div>
 
@@ -257,7 +258,7 @@
                         if(data.status){
                             var file_url = data.file_url;
                             //添加一个div节点,存放图片预览
-                            html = '<div class="upload-item"><img src="'+file_url+'"/><a href="#">×</a><input type="hidden" name="path[]" value="'+file_url+'"/></div>';
+                            html = '<div class="upload-item"><img src="'+file_url+'"/><a href="#" class="delete_gallery">×</a><input type="hidden" name="path[]" value="'+file_url+'"/></div>';
                             $(html).appendTo('.upload-img-box');
                             //添加隐藏域,用于保存文件的路径
                             layer.msg('上传成功',{icon:6,time:1000});
@@ -265,6 +266,35 @@
                             layer.msg(data.msg,{icon:5,time:1000});
                         }
                     }
+                });
+                
+                
+                
+                //事件绑定,当点击×的时候,移除图片节点,如果已经存到数据库中,就删除记录
+                $('.upload-img-box').on('click','.delete_gallery',function(){
+                    console.debug(this);
+                    var ele_node = $(this);
+                    var id = ele_node.attr('data');
+                    var url = '{:U("GoodsGallery/delete")}';
+                    var flag = true;
+                    if(id){
+                        var data = {id:id};
+                        //执行ajax操作,发送相册图片id
+                        $.post(url,data,function(response){
+                            //是否删除成功
+                            if(!response.status){
+                                flag = false;
+                            }
+                        });
+                    }
+                    //如果删除成功就移除节点,并且提示成功
+                    if(flag){
+                        ele_node.parent().remove();
+                        layer.msg('删除成功',{icon:6,time:1000});
+                    }else{
+                        layer.msg('删除失败',{icon:5,time:1000});
+                    }
+                    return false;
                 });
             });
         </script>

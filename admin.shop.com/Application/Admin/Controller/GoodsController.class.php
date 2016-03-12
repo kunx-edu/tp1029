@@ -84,7 +84,7 @@ class GoodsController extends \Think\Controller {
 
     /**
      * 删除商品
-     * @param type $id
+     * @param integer $id.
      */
     public function delete($id) {
         if ($this->_model->deleteGoods($id) === false) {
