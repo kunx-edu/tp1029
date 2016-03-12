@@ -5,17 +5,18 @@
         <title>ECSHOP 管理中心 - {$meta_title} </title>
         <link href="__CSS__/general.css" rel="stylesheet" type="text/css" />
         <link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+        <css href="__CSS__/upload.css"/>
         <css href="__ZTREE__/css/zTreeStyle/zTreeStyle.css"/>
         <style type="text/css">
-            .upload-pre-item img{
+            .upload-item img{
                 width:150px;
             }
 
-            .upload-pre-item{
+            .upload-item{
                 display:inline-block;
             }
 
-            .upload-pre-item a{
+            .upload-item a{
                 position:relative;
                 top:5px;
                 right:15px;
@@ -142,24 +143,16 @@
                             <td class="label">商品相册：</td>
                             <td>
                                 <div class="upload-img-box">
-                                    <div class="upload-pre-item">
+                                    <div class="upload-item">
                                         <img src="__IMG__/goods1.jpg"/>
                                         <a href="#">×</a>
+                                        <input type='hidden' name='' value='http://qinmiu/faa.jpg'/>
                                     </div>
 
-                                    <div class="upload-pre-item">
-                                        <img src="__IMG__/goods2.jpg"/>
-                                        <a href="#">×</a>
-                                    </div>
-
-                                    <div class="upload-pre-item">
-                                        <img src="__IMG__/goods3.jpg"/>
-                                        <a href="#">×</a>
-                                    </div>
                                 </div>
 
                                 <div>
-                                    <input type="file" />
+                                    <input type="file" id='file_upload'/>
                                 </div>
                             </td>
                         </tr>
@@ -185,19 +178,20 @@
         <js href="__UEDITOR__/my.config.js"/> 
         <js href="__UEDITOR__/ueditor.all.min.js"/> 
         <js href="__UEDITOR__/lang/zh-cn/zh-cn.js"/> 
+        <js href="__UPLOADIFY__/jquery.uploadify.min.js"/>
         <script type="text/javascript">
 
             $(document).ready(function () {
             //初始化富文本编辑器
-            var ue = UE.getEditor('ueditor');
-            //基本配置
-            var setting = {
-            data: {
-            simpleData: {
-            enable: true,
-                    pIdKey: "parent_id",
-            }
-            },
+                var ue = UE.getEditor('ueditor');
+                //基本配置
+                var setting = {
+                data: {
+                    simpleData: {
+                        enable: true,
+                        pIdKey: "parent_id",
+                    }
+                },
                     callback: {
                     onClick: function (event, treeid, tree_node) {
                     $('#goods_category_id').val(tree_node.id);
@@ -220,29 +214,58 @@
             var ztree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
             //展开所有的ztree节点
             ztree_obj.expandAll(true);
-            //回显商品品牌\供货商\是否上架\加入推荐
-            <notempty name='row'>
-                $('.brand_id').val([{$row.brand_id}]);
-                $('.supplier_id').val([{$row.supplier_id}]);
-                $('.is_on_sale').val([{$row.is_on_sale}]);
-                var goods_status = [];
-                if ({$row.is_best}){
-                goods_status.push(1);
-                }
-                if ({$row.is_new}){
-                goods_status.push(2);
-                }
-                if ({$row.is_hot}){
-                goods_status.push(4);
-                }
-                $('.goods_status').val(goods_status);
-                var category_node = ztree_obj.getNodeByParam('id', {$row.goods_category_id});
-                ztree_obj.selectNode(category_node);
-                $('#goods_category_id').val(category_node.id);
-                $('#goods_category_name').val(category_node.name);
-            <else />
-                $('.is_on_sale').val([1]);
-            </notempty>
+                //回显商品品牌\供货商\是否上架\加入推荐
+                <notempty name='row'>
+                    $('.brand_id').val([{$row.brand_id}]);
+                    $('.supplier_id').val([{$row.supplier_id}]);
+                    $('.is_on_sale').val([{$row.is_on_sale}]);
+                    var goods_status = [];
+                    if ({$row.is_best}){
+                    goods_status.push(1);
+                    }
+                    if ({$row.is_new}){
+                    goods_status.push(2);
+                    }
+                    if ({$row.is_hot}){
+                    goods_status.push(4);
+                    }
+                    $('.goods_status').val(goods_status);
+                    var category_node = ztree_obj.getNodeByParam('id', {$row.goods_category_id});
+                    ztree_obj.selectNode(category_node);
+                    $('#goods_category_id').val(category_node.id);
+                    $('#goods_category_name').val(category_node.name);
+                <else />
+                    $('.is_on_sale').val([1]);
+                </notempty>
+        
+        
+        
+                //初始化上传插件
+                $('#file_upload').uploadify({
+                    'swf': '__UPLOADIFY__/uploadify.swf',
+                    'uploader': '{:U("Upload/index")}',
+                    'fileObjName': 'logo',
+                    'buttonText': '上传',
+                    'multi':true,
+                    'overrideEvents': ['onUploadSuccess', 'onUploadError'],
+                    'onUploadError': function (file, errorCode, errorMsg, errorString) {
+                        console.debug(arguments);
+                    },
+                    'onUploadSuccess': function (file, data, response) {
+                        data = $.parseJSON(data);
+                        console.debug(data.file_url);
+                        if(data.status){
+                            var file_url = data.file_url;
+                            //添加一个div节点,存放图片预览
+                            html = '<div class="upload-item"><img src="'+file_url+'"/><a href="#">×</a><input type="hidden" name="path[]" value="'+file_url+'"/></div>';
+                            $(html).appendTo('.upload-img-box');
+                            //添加隐藏域,用于保存文件的路径
+                            layer.msg('上传成功',{icon:6,time:1000});
+                        }else{
+                            layer.msg(data.msg,{icon:5,time:1000});
+                        }
+                    }
+                });
             });
         </script>
     </body>

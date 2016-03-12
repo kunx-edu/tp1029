@@ -48,6 +48,7 @@ class GoodsModel extends \Think\Model {
      * 完成商品的添加
      */
     public function addGoods() {
+        unset($this->data['id']);
         //开启事务
         $this->startTrans();
         $this->data['sn'] = $this->setSn($this->data['sn']);
@@ -61,8 +62,16 @@ class GoodsModel extends \Think\Model {
             return false;
         }
 
-        if ($this->addContent($id) === false) {
+        //保存商品详细信息
+        if ($this->_addContent($id) === false) {
             $this->error = '添加商品详情失败';
+            $this->rollback();
+            return false;
+        }
+
+        //执行相册的保存
+        if ($this->_addGallery($id) === false) {
+            $this->error = '添加相册图片失败';
             $this->rollback();
             return false;
         }
@@ -76,7 +85,7 @@ class GoodsModel extends \Think\Model {
      * @param integer $goods_id 商品id
      * @return boolean false失败 true成功
      */
-    private function addContent($goods_id) {
+    private function _addContent($goods_id) {
         $model   = M('GoodsIntro');
         $content = I('post.content', '', false); //不使用过滤
         $data    = array(
@@ -92,8 +101,8 @@ class GoodsModel extends \Think\Model {
      * @param type $page
      */
     public function getPageResult(array $cond = array(), $page = 1) {
-        $count     = $this->where($cond)->where('status<>-1')->count();
-        $rows      = $this->where($cond)->where('status<>-1')->order('sort asc')->page($page, C('PAGE_SIZE'))->select();
+        $count     = $this->where($cond)->where('status<>0')->count();
+        $rows      = $this->where($cond)->where('status<>0')->order('sort asc')->page($page, C('PAGE_SIZE'))->select();
         $page      = new \Think\Page($count, C('PAGE_SIZE'));
         $page->setConfig('theme', '%HEADER% %FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END%');
         $page_html = $page->show();
@@ -122,21 +131,21 @@ class GoodsModel extends \Think\Model {
         $row['content'] = M('GoodsIntro')->getFieldByGoodsId($goods_id, 'content');
         return $row;
     }
-    
+
     /**
      * 保存商品
      */
-    public function updateGoods(){
+    public function updateGoods() {
         $request_data = $this->data;
         $this->startTrans();
         //1.保存基本信息
-        if($this->save() === false){
+        if ($this->save() === false) {
             $this->error = '保存失败';
             $this->rollback();
             return false;
         }
         //2.保存详细描述
-        if($this->updateContent($request_data['id']) === false){
+        if ($this->updateContent($request_data['id']) === false) {
             $this->error = '保存详细描述失败';
             $this->rollback();
             return false;
@@ -150,11 +159,47 @@ class GoodsModel extends \Think\Model {
      * @param integer $goods_id
      * @return boolean
      */
-    private function updateContent($goods_id){
+    private function updateContent($goods_id) {
         $data = array(
-            'goods_id'=>$goods_id,
-            'content'=>I('post.content','',false),
+            'goods_id' => $goods_id,
+            'content'  => I('post.content', '', false),
         );
         return M('GoodsIntro')->save($data) !== false;
     }
+
+    /**
+     * 删除指定的商品
+     * @param type $goods_id
+     */
+    public function deleteGoods($goods_id) {
+        $data = array(
+            'id'     => $goods_id,
+            'status' => 0,
+        );
+        return $this->save($data);
+    }
+
+    /**
+     * 插入相册
+     * @param integer $goods_id 商品的id
+     * @return boolean
+     */
+    private function _addGallery($goods_id) {
+        //收集相册图片
+        $paths = I('post.path');
+        $data  = array();
+        foreach ($paths as $path) {
+            $data[] = array(
+                'goods_id' => $goods_id,
+                'path'     => $path,
+            );
+        }
+        if ($data) {
+            //保存相册图片
+            $model = M('GoodsGallery');
+            return $model->addAll($data);
+        }
+        return true;
+    }
+
 }

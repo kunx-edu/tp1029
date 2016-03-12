@@ -82,4 +82,16 @@ class GoodsController extends \Think\Controller {
         $this->assign('goods_category_list', json_encode(D('GoodsCategory')->getList()));
     }
 
+    /**
+     * 删除商品
+     * @param type $id
+     */
+    public function delete($id) {
+        if ($this->_model->deleteGoods($id) === false) {
+            $this->error($this->_model->getError());
+        } else {
+            $this->success('删除成功', U('index'));
+        }
+    }
+
 }
