@@ -30,6 +30,12 @@ class GoodsController extends \Think\Controller {
         if (IS_POST) {
             var_dump(I('post.'));
         } else {
+            //1.读取品牌列表
+            $this->assign('brand_list',D('Brand')->getList());
+            //2.读取供应商列表
+            $this->assign('supplier_list',D('Supplier')->getList());
+            //3.获取商品分类列表
+            $this->assign('goods_category_list',json_encode(D('GoodsCategory')->getList()));
             $this->display();
         }
     }

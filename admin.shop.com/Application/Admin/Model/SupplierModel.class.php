@@ -45,5 +45,13 @@ class SupplierModel extends \Think\Model {
 
         return $this->save($data);
     }
+    
+    /**
+     * 取出正常显示的供货商.
+     * @return array
+     */
+    public function getList(){
+        return $this->field('id,name')->where(array('status'=>array('gt',-1)))->select();
+    }
 
 }

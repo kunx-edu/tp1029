@@ -10,7 +10,7 @@ class GoodsCategoryModel extends \Think\Model{
         $cond = array(
             'status'=>array('gt',-1),
         );
-        return $this->where($cond)->order('lft asc')->select();
+        return $this->field('id,name,parent_id,level,status,intro')->where($cond)->order('lft asc')->select();
     }
     
     /**

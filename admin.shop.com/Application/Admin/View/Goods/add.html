@@ -5,6 +5,7 @@
         <title>ECSHOP 管理中心 - {$meta_title} </title>
         <link href="__CSS__/general.css" rel="stylesheet" type="text/css" />
         <link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+        <css href="__ZTREE__/css/zTreeStyle/zTreeStyle.css"/>
         <style type="text/css">
             .upload-pre-item img{
                 width:150px;
@@ -55,35 +56,22 @@
                         <tr>
                             <td class="label">商品分类：</td>
                             <td>
-                                <select name="goods_category_id">
-                                    <option value="0">请选择...</option>
-                                    <foreach name="cat_list" item="cat_val">
-                                        <option value="{$cat_val.cat_id}" <if condition="$cat_val['cat_id'] eq $row['cat_id']"> selected="true"</if> >{$cat_val.lev|str_repeat='&nbsp;&nbsp;',###}{$cat_val.cat_name}</option>
-                                    </foreach>
-                                </select>
+                                <input type="hidden" id="goods_category_id" name="goods_category_id" value="" />
+                                <input type="text" id="goods_category_name" value="" disabled="disabled"/>
+                                <ul id="treeDemo" class="ztree"></ul>
                                 <span class="require-field">*</span>
                             </td>
                         </tr>
                         <tr>
                             <td class="label">商品品牌：</td>
                             <td>
-                                <select name="brand_id">
-                                    <option value="0">请选择...</option>
-                                    <foreach name="brand_list" item="brand_val">
-                                        <option value="{$brand_val.brand_id}">{$brand_val.brand_name}</option>
-                                    </foreach>
-                                </select>
+                                {:arr2select($brand_list,'id','name','brand_id')}
                             </td>
                         </tr>
                         <tr>
                             <td class="label">供货商：</td>
                             <td>
-                                <select name="supplier_id">
-                                    <option value="0">请选择...</option>
-                                    <foreach name="brand_list" item="brand_val">
-                                        <option value="{$brand_val.brand_id}">{$brand_val.brand_name}</option>
-                                    </foreach>
-                                </select>
+                                {:arr2select($supplier_list,'id','name','supplier_id')}
                             </td>
                         </tr>
                         <tr>
@@ -114,15 +102,15 @@
                         <tr>
                             <td class="label">加入推荐：</td>
                             <td>
-                                <input type="checkbox" name="is_best" value="1" /> 精品 
-                                <input type="checkbox" name="is_new" value="1" /> 新品 
-                                <input type="checkbox" name="is_hot" value="1" /> 热销
+                                <input type="checkbox" name="goods_status[]" value="1" /> 精品 
+                                <input type="checkbox" name="goods_status[]" value="2" /> 新品 
+                                <input type="checkbox" name="goods_status[]" value="4" /> 热销
                             </td>
                         </tr>
                         <tr>
                             <td class="label">推荐排序：</td>
                             <td>
-                                <input type="text" name="sort_order" size="5" value="{$val.sort_order}"/>
+                                <input type="text" name="sort" size="5" value="20"/>
                             </td>
                         </tr>
 
@@ -184,6 +172,51 @@
 
         <div id="footer">
             共执行 9 个查询，用时 0.025161 秒，Gzip 已禁用，内存占用 3.258 MB<br />
-            版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。</div>
+            版权所有 &copy; 2005-2012 上海商派网络科技有限公司，并保留所有权利。
+        </div>
+        <js href="__JS__/jquery.min.js"/> 
+        <js href="__ZTREE__/js/jquery.ztree.core.min.js"/> 
+        <js href="__LAYER__/layer.js"/> 
+        <script type="text/javascript">
+            //基本配置
+            var setting = {
+                data: {
+                    simpleData: {
+                        enable: true,
+                        pIdKey: "parent_id",
+                    }
+                },
+                callback: {
+                    onClick: function (event, treeid, tree_node) {
+                        $('#goods_category_id').val(tree_node.id);
+                        $('#goods_category_name').val(tree_node.name);
+                        
+                    },
+                    beforeClick:function(treeid,tree_node){
+                        //如果选择的是枝干节点,就返回false,不允许选择
+                        if(tree_node.isParent){
+                            layer.msg('不能选择枝干节点',{icon:5,time:1000});
+                            return false;
+                        }
+//                        console.debug(tree_node);
+                    },
+                },
+            };
+
+            //准备节点数据
+            var zNodes = {$goods_category_list};
+
+            $(document).ready(function () {
+                //默认选中[是否显示]
+                $(':input[name=status]').val([{$row.status | default = 1}]);
+                        //将html节点初始化成ztree的效果
+                        var ztree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+
+
+
+                        //展开所有的ztree节点
+                        ztree_obj.expandAll(true);
+            });
+        </script>
     </body>
 </html>

@@ -46,4 +46,12 @@ class BrandModel extends \Think\Model {
         return $this->save($data);
     }
     
+    /**
+     * 取出正常显示的品牌.
+     * @return array
+     */
+    public function getList(){
+        return $this->field('id,name')->where(array('status'=>array('gt',-1)))->select();
+    }
+    
 }
