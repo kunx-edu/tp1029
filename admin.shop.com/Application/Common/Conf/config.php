@@ -11,7 +11,8 @@ return array(
         '__UPLOADIFY__'  => DOMAIN . '/Public/ext/uploadify', //uploadify插件路径
         '__LAYER__'      => DOMAIN . '/Public/ext/layer', //layer插件路径
         '__ZTREE__'      => DOMAIN . '/Public/ext/ztree', //ztree插件路径
-        '__TREEGRID__'      => DOMAIN . '/Public/ext/treegrid', //ztree插件路径
+        '__TREEGRID__'      => DOMAIN . '/Public/ext/treegrid', //treegrid插件路径
+        '__UEDITOR__'      => DOMAIN . '/Public/ext/ueditor', //ueditor插件路径
     ),
     'SHOW_PAGE_TRACE'   => true, //开启页面调试
     /* 数据库设置 */

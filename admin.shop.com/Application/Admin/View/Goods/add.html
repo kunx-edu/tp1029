@@ -48,9 +48,13 @@
                         <tr>
                             <td class="label">商品货号： </td>
                             <td>
-                                <input type="text" name="sn" value="{$row.sn}" size="20"/>
-                                <span id="goods_sn_notice"></span><br />
-                                <span class="notice-span"id="noticeGoodsSN">如果您不输入商品货号，系统将自动生成一个唯一的货号。</span>
+                                <empty name='row'>
+                                    <input type="text" name="sn" value="{$row.sn}" size="20"/>
+                                    <span id="goods_sn_notice"></span><br />
+                                    <span class="notice-span"id="noticeGoodsSN">如果您不输入商品货号，系统将自动生成一个唯一的货号。</span>
+                                    <else/>
+                                    {$row.sn}
+                                </empty>
                             </td>
                         </tr>
                         <tr>
@@ -95,16 +99,16 @@
                         </tr>
                         <td class="label">是否上架：</td>
                         <td>
-                            <input type="radio" name="is_on_sale" value="1" checked="true"/> 是
-                            <input type="radio" name="is_on_sale" value="0" /> 否
+                            <input type="radio" name="is_on_sale" value="1" class='is_on_sale'/> 是
+                            <input type="radio" name="is_on_sale" value="0" class='is_on_sale'/> 否
                         </td>
                         </tr>
                         <tr>
                             <td class="label">加入推荐：</td>
                             <td>
-                                <input type="checkbox" name="goods_status[]" value="1" /> 精品 
-                                <input type="checkbox" name="goods_status[]" value="2" /> 新品 
-                                <input type="checkbox" name="goods_status[]" value="4" /> 热销
+                                <input type="checkbox" name="goods_status[]" value="1" class='goods_status'/> 精品 
+                                <input type="checkbox" name="goods_status[]" value="2" class='goods_status'/> 新品 
+                                <input type="checkbox" name="goods_status[]" value="4" class='goods_status'/> 热销
                             </td>
                         </tr>
                         <tr>
@@ -123,7 +127,7 @@
                         <tr>
                             <td class="label">商品详细描述：</td>
                             <td>
-                                <textarea name="content" cols="40" rows="3"></textarea>
+                                <textarea name="content" cols="40" rows="3" id='ueditor'>{$row.content}</textarea>
                             </td>
                         </tr>
 
@@ -163,6 +167,7 @@
 
 
                     <div class="button-div">
+                        <input type="hidden" value="{$row.id}" name='id'/>
                         <input type="submit" value=" 确定 " class="button"/>
                         <input type="reset" value=" 重置 " class="button" />
                     </div>
@@ -177,45 +182,67 @@
         <js href="__JS__/jquery.min.js"/> 
         <js href="__ZTREE__/js/jquery.ztree.core.min.js"/> 
         <js href="__LAYER__/layer.js"/> 
+        <js href="__UEDITOR__/my.config.js"/> 
+        <js href="__UEDITOR__/ueditor.all.min.js"/> 
+        <js href="__UEDITOR__/lang/zh-cn/zh-cn.js"/> 
         <script type="text/javascript">
-            //基本配置
-            var setting = {
-                data: {
-                    simpleData: {
-                        enable: true,
-                        pIdKey: "parent_id",
-                    }
-                },
-                callback: {
-                    onClick: function (event, treeid, tree_node) {
-                        $('#goods_category_id').val(tree_node.id);
-                        $('#goods_category_name').val(tree_node.name);
-                        
-                    },
-                    beforeClick:function(treeid,tree_node){
-                        //如果选择的是枝干节点,就返回false,不允许选择
-                        if(tree_node.isParent){
-                            layer.msg('不能选择枝干节点',{icon:5,time:1000});
-                            return false;
-                        }
-//                        console.debug(tree_node);
-                    },
-                },
-            };
-
-            //准备节点数据
-            var zNodes = {$goods_category_list};
 
             $(document).ready(function () {
-                //默认选中[是否显示]
-                $(':input[name=status]').val([{$row.status | default = 1}]);
-                        //将html节点初始化成ztree的效果
-                        var ztree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
-
-
-
-                        //展开所有的ztree节点
-                        ztree_obj.expandAll(true);
+            //初始化富文本编辑器
+            var ue = UE.getEditor('ueditor');
+            //基本配置
+            var setting = {
+            data: {
+            simpleData: {
+            enable: true,
+                    pIdKey: "parent_id",
+            }
+            },
+                    callback: {
+                    onClick: function (event, treeid, tree_node) {
+                    $('#goods_category_id').val(tree_node.id);
+                    $('#goods_category_name').val(tree_node.name);
+                    },
+                            beforeClick: function (treeid, tree_node) {
+                            //如果选择的是枝干节点,就返回false,不允许选择
+                            if (tree_node.isParent) {
+                            layer.msg('不能选择枝干节点', {icon: 5, time: 1000});
+                            return false;
+                            }
+                            },
+                    },
+            };
+            //准备节点数据
+            var zNodes = {$goods_category_list};
+            //默认选中[是否显示]
+            $(':input[name=status]').val([{$row.status | default = 1}]);
+            //将html节点初始化成ztree的效果
+            var ztree_obj = $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+            //展开所有的ztree节点
+            ztree_obj.expandAll(true);
+            //回显商品品牌\供货商\是否上架\加入推荐
+            <notempty name='row'>
+                $('.brand_id').val([{$row.brand_id}]);
+                $('.supplier_id').val([{$row.supplier_id}]);
+                $('.is_on_sale').val([{$row.is_on_sale}]);
+                var goods_status = [];
+                if ({$row.is_best}){
+                goods_status.push(1);
+                }
+                if ({$row.is_new}){
+                goods_status.push(2);
+                }
+                if ({$row.is_hot}){
+                goods_status.push(4);
+                }
+                $('.goods_status').val(goods_status);
+                var category_node = ztree_obj.getNodeByParam('id', {$row.goods_category_id});
+                ztree_obj.selectNode(category_node);
+                $('#goods_category_id').val(category_node.id);
+                $('#goods_category_name').val(category_node.name);
+            <else />
+                $('.is_on_sale').val([1]);
+            </notempty>
             });
         </script>
     </body>
