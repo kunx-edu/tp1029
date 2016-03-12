@@ -129,10 +129,7 @@ class GoodsModel extends \Think\Model {
         $row['is_new']  = ($row['goods_status'] & 2) ? 1 : 0;
         $row['is_hot']  = ($row['goods_status'] & 4) ? 1 : 0;
         $row['content'] = M('GoodsIntro')->getFieldByGoodsId($goods_id, 'content');
-//        $row['paths']= M('GoodsGallery')->where(array('goods_id'=>$goods_id))->getField('id,path');
         $row['paths']= M('GoodsGallery')->field('id,path')->where(array('goods_id'=>$goods_id))->select();
-//        var_dump($row);
-//        exit;
         return $row;
     }
 

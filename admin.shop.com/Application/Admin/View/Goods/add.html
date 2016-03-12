@@ -144,10 +144,10 @@
                             <td>
                                 <div class="upload-img-box">
                                     <foreach name='row.paths' item='path'>
-                                    <div class="upload-item">
-                                        <img src="{$path.path}-150"/>
-                                        <a href="#" data='{$path.id}' class='delete_gallery'>×</a>
-                                    </div>
+                                        <div class="upload-item">
+                                            <img src="{$path.path}-150"/>
+                                            <a href="#" data='{$path.id}' class='delete_gallery'>×</a>
+                                        </div>
                                     </foreach>
 
                                 </div>
@@ -194,17 +194,17 @@
                     }
                 },
                     callback: {
-                    onClick: function (event, treeid, tree_node) {
-                    $('#goods_category_id').val(tree_node.id);
-                    $('#goods_category_name').val(tree_node.name);
-                    },
-                            beforeClick: function (treeid, tree_node) {
+                        onClick: function (event, treeid, tree_node) {
+                        $('#goods_category_id').val(tree_node.id);
+                        $('#goods_category_name').val(tree_node.name);
+                        },
+                        beforeClick: function (treeid, tree_node) {
                             //如果选择的是枝干节点,就返回false,不允许选择
                             if (tree_node.isParent) {
-                            layer.msg('不能选择枝干节点', {icon: 5, time: 1000});
-                            return false;
+                                layer.msg('不能选择枝干节点', {icon: 5, time: 1000});
+                                return false;
                             }
-                            },
+                        },
                     },
             };
             //准备节点数据
@@ -222,13 +222,13 @@
                     $('.is_on_sale').val([{$row.is_on_sale}]);
                     var goods_status = [];
                     if ({$row.is_best}){
-                    goods_status.push(1);
+                        goods_status.push(1);
                     }
                     if ({$row.is_new}){
-                    goods_status.push(2);
+                        goods_status.push(2);
                     }
                     if ({$row.is_hot}){
-                    goods_status.push(4);
+                        goods_status.push(4);
                     }
                     $('.goods_status').val(goods_status);
                     var category_node = ztree_obj.getNodeByParam('id', {$row.goods_category_id});
