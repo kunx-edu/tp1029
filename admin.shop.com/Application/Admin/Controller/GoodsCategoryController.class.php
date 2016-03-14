@@ -79,6 +79,10 @@ class GoodsCategoryController extends \Think\Controller {
         }
     }
     
+    /**
+     * 删除商品分类
+     * @param type $id
+     */
     public function delete($id){
         if($this->_model->deleteCategory($id)===false){
             $this->error('删除分类失败');

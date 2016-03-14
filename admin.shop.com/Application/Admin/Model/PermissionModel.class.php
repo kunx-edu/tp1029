@@ -76,5 +76,25 @@ class PermissionModel extends \Think\Model {
 
         return true;
     }
+    
+    /**
+     * 逻辑删除权限,同时会删除所有的后代权限
+     * @param integer $id
+     * @return interger|false
+     */
+    public function deletePermission($id){
+        $row = $this->field('lft,rght')->find($id);
+        //update goods_category set status=-1 where lft>=17 and rght<=25
+        $data = array(
+            'status'=>0,
+            'name'=>array('exp','concat(`name`,"_del")'),
+        );
+        //拼接条件,所有的后代分类左节点都>当前的左节点,所有的右节点都<当前的右节点
+        $cond = array(
+            'lft'=>array('egt',$row['lft']),
+            'rght'=>array('elt',$row['rght']),
+        );
+        return $this->where($cond)->save($data);
+    }
 
 }

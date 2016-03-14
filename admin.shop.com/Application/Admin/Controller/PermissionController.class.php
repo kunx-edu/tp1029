@@ -78,5 +78,18 @@ class PermissionController extends \Think\Controller {
         array_unshift($rows, $top_node);
         $this->assign('rows', json_encode($rows));
     }
+    
+    
+    /**
+     * 删除权限
+     * @param type $id
+     */
+    public function delete($id){
+        if($this->_model->deletePermission($id)===false){
+            $this->error('删除权限失败');
+        }
+        $this->success('删除权限成功',U('index'));
+    }
+
 
 }
