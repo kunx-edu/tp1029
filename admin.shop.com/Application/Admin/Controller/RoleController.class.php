@@ -28,8 +28,12 @@ class RoleController extends \Think\Controller {
      * 展示角色列表
      */
     public function index() {
-
-        $this->assign('rows', $this->_model->getList());
+        $cond = array();
+        $keyword = I('get.keyword');
+        if($keyword){
+            $cond['name'] = array('like','%'.$keyword.'%');
+        }
+        $this->assign('rows', $this->_model->getList($cond));
         $this->display();
     }
 

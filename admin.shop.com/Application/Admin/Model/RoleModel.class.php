@@ -60,10 +60,8 @@ class RoleModel extends \Think\Model {
      * 获取角色列表.
      * @return type
      */
-    public function getList() {
-        $cond = array(
-            'status' => array('gt', 0),
-        );
+    public function getList(array $cond = array()) {
+        $cond['status'] = array('gt', 0);
         return $this->where($cond)->order('sort')->select();
     }
 
