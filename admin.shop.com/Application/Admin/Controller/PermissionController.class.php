@@ -68,7 +68,7 @@ class PermissionController extends \Think\Controller {
      */
     private function _before_view() {
         //展示现有权限列表
-        $rows     = $this->_model->select();
+        $rows     = $this->_model->getList();
         $top_node = array(
             'id'        => 0,
             'name'      => '请选择',

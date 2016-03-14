@@ -61,3 +61,13 @@ function onearr2select(array $data, $name = '', $selected_value = '') {
     $html .= "</select>";
     return $html;
 }
+
+/**
+ * 自定义加盐加密算法
+ * @param string $string 原密码
+ * @param string $salt 盐
+ * @return string 加盐加密后的结果
+ */
+function my_mcrypt($string,$salt){
+    return md5(md5($string).$salt);
+}
