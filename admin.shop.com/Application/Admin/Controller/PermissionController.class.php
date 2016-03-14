@@ -20,7 +20,6 @@ class PermissionController extends \Think\Controller {
 
     /**
      * 权限列表页
-     * TODO:都没完成
      */
     public function index() {
         $this->assign('rows', $this->_model->getList());
@@ -45,7 +44,7 @@ class PermissionController extends \Think\Controller {
 
     /**
      * 编辑权限
-     * @param type $id
+     * @param integer $id
      */
     public function edit($id) {
         if (IS_POST) {
