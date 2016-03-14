@@ -29,7 +29,18 @@ class DbMysqlLogic implements DbMysql{
     }
 
     public function getOne($sql, array $args = array()) {
-        echo __METHOD__ . '<br />';
+        $params = func_get_args();
+        $sql = $params[0];
+        $field = '`'.$params[1].'`';
+        $table_name = '`'.$params[2].'`';
+        $sql = str_replace(array('?F','?T'), array($field,$table_name), $sql);
+        $rows = M()->query($sql);
+        if($rows){
+            $row = array_shift(array_shift($rows));
+        }
+        return $row;
+//        var_dump($row);
+//        exit;
     }
 
     /**
