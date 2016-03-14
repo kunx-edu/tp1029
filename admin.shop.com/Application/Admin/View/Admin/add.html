@@ -25,23 +25,28 @@
                             <input type='text' name='username' maxlength="20" value='{$row.username}' size='27' /> <font color="red">*</font>
                         </td>
                     </tr>
+                    <empty name="row">
                     <tr>
                         <td class="label">密码:</td>
                         <td>
                             <input type='password' name='password' maxlength="20" value='{$row.password}' size='27' /> <font color="red">*</font>
                         </td>
                     </tr>
+                    </empty>
                     <tr>
                         <td class="label">email:</td>
                         <td>
-                            <input type="text" name='email'  value="{$row.email}" size="27" />
+                            <empty name="row">
+                                <input type="text" name='email'  value="{$row.email}" size="27" />
+                            <else/>{$row.email}
+                            </empty>
                         </td>
                     </tr>
                     <tr>
                         <td class="label">角色:</td>
                         <td>
                             <foreach name="roles" item="role">
-                                <label><input type="checkbox" name="role_id[]" value="{$role.id}"/>{$role.name}</label>
+                                <label><input type="checkbox" name="role_id[]" value="{$role.id}" <if condition="in_array($role['id'],$row['roles'])">checked='checked'</if>/>{$role.name}</label>
                             </foreach>
                         </td>
                     </tr>
@@ -111,8 +116,9 @@
                 <notempty name='row.id'>
                     //选中关联的权限列表
                     var checked_nodes = {$row.permission_id};
-                    $(checked_nodes).each(function(){
-                            var tree_node = ztree_obj.getNodeByParam('id',this.permission_id);
+                    console.debug(checked_nodes);
+                    $(checked_nodes).each(function(i,n){
+                            var tree_node = ztree_obj.getNodeByParam('id',n);
                             ztree_obj.checkNode(tree_node,true,true,true);
                         }
                     );

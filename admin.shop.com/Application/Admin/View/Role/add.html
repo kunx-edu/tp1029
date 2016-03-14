@@ -111,6 +111,8 @@
                     //选中关联的权限列表
                     var checked_nodes = {$row.permission_id};
                     $(checked_nodes).each(function(){
+//                        console.debug(this);
+//                        return;
                             var tree_node = ztree_obj.getNodeByParam('id',this.permission_id);
                             ztree_obj.checkNode(tree_node,true,true,true);
                         }

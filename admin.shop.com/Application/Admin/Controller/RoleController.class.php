@@ -87,7 +87,7 @@ class RoleController extends \Think\Controller {
 
     private function _before_view() {
         //展示现有权限列表
-        $rows = $this->_model->getList();
+        $rows = D('Permission')->getList();
         $this->assign('rows', json_encode($rows));
     }
 

@@ -152,4 +152,5 @@ class RoleModel extends \Think\Model {
         );
         return M('RolePermission')->where($cond)->delete();
     }
+
 }
