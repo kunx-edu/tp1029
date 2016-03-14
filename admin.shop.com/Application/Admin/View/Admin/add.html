@@ -22,7 +22,11 @@
                     <tr>
                         <td class="label">管理员名:</td>
                         <td>
+                            <empty name="row">
                             <input type='text' name='username' maxlength="20" value='{$row.username}' size='27' /> <font color="red">*</font>
+                            <else/>
+                            {$row.username}
+                            </empty>
                         </td>
                     </tr>
                     <empty name="row">

@@ -16,11 +16,11 @@ namespace Admin\Model;
 class AdminModel extends \Think\Model {
 
     protected $_validate = array(
-        array('username', 'require', '用户名不能为空', self::MUST_VALIDATE, '', self::MODEL_BOTH),
-        array('username', '', '用户名已存在', self::MUST_VALIDATE, 'unique', self::MODEL_BOTH),
-        array('password', 'require', '密码不能为空', self::MUST_VALIDATE, '', self::MODEL_BOTH),
-        array('email', 'require', '邮箱不能为空', self::MUST_VALIDATE, '', self::MODEL_BOTH),
-        array('email', '', '邮箱已存在', self::MUST_VALIDATE, 'unique', self::MODEL_BOTH),
+        array('username', 'require', '用户名不能为空', self::EXISTS_VALIDATE, '', self::MODEL_BOTH),
+        array('username', '', '用户名已存在', self::EXISTS_VALIDATE, 'unique', self::MODEL_BOTH),
+        array('password', 'require', '密码不能为空', self::EXISTS_VALIDATE, '', self::MODEL_BOTH),
+        array('email', 'require', '邮箱不能为空', self::EXISTS_VALIDATE, '', self::MODEL_BOTH),
+        array('email', '', '邮箱已存在', self::EXISTS_VALIDATE, 'unique', self::MODEL_BOTH),
     );
     protected $_auto     = array(
         array('salt', '\Org\Util\String::randString', self::MODEL_INSERT, 'function'),
@@ -124,21 +124,112 @@ class AdminModel extends \Think\Model {
      * 编辑管理员
      * @param integer $admin_id
      */
-    public function updateAdmin($admin_id) {
-        var_dump($this->data);
-        exit;
+    public function updateAdmin() {
+        $request_data = $this->data;
+        $this->startTrans();
+//        $this->data['password'] = my_mcrypt($this->data['password'], $this->data['salt']);
+        //保存管理员基本信息
+//        var_dump($this->data);
+//        exit;
+//        if ($this->save() === false) {
+//            $this->error = '添加管理员失败';
+//            $this->rollback();
+//            return false;
+//        }
+        //保存管理员-角色
+        if ($this->_deleteRole($request_data['id']) === false) {
+            $this->error = '删除原有管理员角色关联失败';
+            $this->rollback();
+            return false;
+        }
+        if ($this->_addAdminRole($request_data['id']) === false) {
+            $this->error = '保存管理员角色关联失败';
+            $this->rollback();
+            return false;
+        }
+
+        //保存管理员-权限
+        if ($this->_deletePermission($request_data['id']) === false) {
+            $this->error = '删除原有管理员特殊权限关联失败';
+            $this->rollback();
+            return false;
+        }
+        if ($this->_addAdminPermission($request_data['id']) === false) {
+            $this->error = '保存管理员特殊权限关联失败';
+            $this->rollback();
+            return false;
+        }
+
+        $this->commit();
+        return true;
     }
 
     public function getAdminInfo($admin_id) {
         $row = $this->find($admin_id);
         if ($row) {
-            $cond         = array(
+            $cond                 = array(
                 'admin_id' => $admin_id
             );
-            $row['roles'] = M('AdminRole')->where($cond)->getField('role_id',true);
-            $row['permission_id'] = json_encode(M('AdminPermission')->where($cond)->getField('permission_id',true));
+            $row['roles']         = M('AdminRole')->where($cond)->getField('role_id', true);
+            $row['permission_id'] = json_encode(M('AdminPermission')->where($cond)->getField('permission_id', true));
         }
         return $row;
+    }
+
+    /**
+     * 删除已有的管理员-角色关系
+     * @param integer $admin_id
+     * @return type
+     */
+    private function _deleteRole($admin_id) {
+        $cond = array(
+            'admin_id' => $admin_id
+        );
+        return M('AdminRole')->where($cond)->delete();
+    }
+
+    /**
+     * 删除已有的管理员-权限关系
+     * @param integer $admin_id
+     * @return type
+     */
+    private function _deletePermission($admin_id) {
+        $cond = array(
+            'admin_id' => $admin_id
+        );
+        return M('AdminPermission')->where($cond)->delete();
+    }
+
+    /**
+     * 删除管理员.
+     * @param integer $admin_id
+     * @return boolean
+     */
+    public function deleteAdmin($admin_id) {
+        $this->startTrans();
+        //删除基本信息
+        if ($this->delete($admin_id) === false) {
+            $this->error = '删除管理员失败';
+            $this->rollback();
+            return false;
+        }
+
+        //删除管理员-角色信息
+        if ($this->_deleteRole($admin_id) === false) {
+            $this->error = '删除原有管理员角色关联失败';
+            $this->rollback();
+            return false;
+        }
+
+        //删除管理员-权限信息
+        if ($this->_deletePermission($admin_id) === false) {
+            $this->error = '删除原有管理员特殊权限关联失败';
+            $this->rollback();
+            return false;
+        }
+
+        $this->commit();
+        return true;
     }
 
 }

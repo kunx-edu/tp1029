@@ -13,7 +13,8 @@ namespace Admin\Controller;
  *
  * @author qingf
  */
-class AdminController extends \Think\Controller{
+class AdminController extends \Think\Controller {
+
     private $_model = null;
 
     protected function _initialize() {
@@ -27,26 +28,26 @@ class AdminController extends \Think\Controller{
         $this->assign('meta_title', $meta_title);
         $this->_model = D('Admin'); //由于所有的操作都需要用到模型,我们在初始化方法中创建
     }
-    
+
     /**
      * 管理员列表
      */
-    public function index(){
+    public function index() {
         $keyword = I('get.keyword');
-        $cond = array();
-        if($keyword){
-            $cond['username'] = array('like','%'.$keyword.'%');
+        $cond    = array();
+        if ($keyword) {
+            $cond['username'] = array('like', '%' . $keyword . '%');
         }
-        
-        $this->assign($this->_model->getPageResult($cond,I('get.p')));
+
+        $this->assign($this->_model->getPageResult($cond, I('get.p')));
         $this->display();
     }
-    
+
     /**
      * 添加管理员
      */
-    public function add(){
-        if(IS_POST){
+    public function add() {
+        if (IS_POST) {
             if ($this->_model->create() === false) {
                 $this->error($this->_model->getError());
             }
@@ -55,18 +56,18 @@ class AdminController extends \Think\Controller{
             }
 
             $this->success('添加管理员成功', U('index'));
-        }else{
+        } else {
             $this->_before_view();
             $this->display();
         }
     }
-    
+
     /**
      * 修改管理员
      * @param type $id
      */
-    public function edit($id){
-        if(IS_POST){
+    public function edit($id) {
+        if (IS_POST) {
             if ($this->_model->create() === false) {
                 $this->error($this->_model->getError());
             }
@@ -75,17 +76,21 @@ class AdminController extends \Think\Controller{
             }
 
             $this->success('修改管理员成功', U('index'));
-        }else{
+        } else {
             $this->_before_view();
             $this->assign('row', $this->_model->getAdminInfo($id));
             $this->display('add');
         }
     }
-    
-    public function delete($id){
-        
+
+    public function delete($id) {
+        if ($this->_model->deleteAdmin($id) === false) {
+            $this->error($this->_model->getError());
+        }
+
+        $this->success('删除管理员成功', U('index'));
     }
-    
+
     /**
      * 获取角色和权限列表
      */
@@ -97,4 +102,5 @@ class AdminController extends \Think\Controller{
         $rows = D('Permission')->getList();
         $this->assign('permissions', json_encode($rows));
     }
+
 }
