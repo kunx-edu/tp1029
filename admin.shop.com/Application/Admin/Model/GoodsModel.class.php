@@ -134,7 +134,6 @@ class GoodsModel extends \Think\Model {
             $value['is_hot']  = ($value['goods_status'] & 4) ? 1 : 0;
             $rows[$key]       = $value;
         }
-        echo $this->getLastSql();
         return array('page_html' => $page_html, 'rows' => $rows);
     }
 

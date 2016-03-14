@@ -45,7 +45,7 @@ class GoodsController extends \Think\Controller {
         }
         
         $is_on_sale = I('get.is_on_sale');
-        if($is_on_sale){
+        if($is_on_sale !== ''){
             $cond['is_on_sale'] = $is_on_sale;
         }
         $page    = I('get.p', 1);
