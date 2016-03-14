@@ -6,11 +6,12 @@ class GoodsCategoryModel extends \Think\Model{
      * 获取分类列表
      * @return type
      */
-    public function getList(){
+    public function getList($field='*'){
+        
         $cond = array(
             'status'=>array('gt',-1),
         );
-        return $this->field('id,name,parent_id,level,status,intro')->where($cond)->order('lft asc')->select();
+        return $this->field($field)->where($cond)->order('lft asc')->select();
     }
     
     /**

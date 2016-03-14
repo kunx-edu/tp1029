@@ -29,6 +29,21 @@ class GoodsController extends \Think\Controller {
         $page    = I('get.p', 1);
         $rows    = $this->_model->getPageResult($cond, $page);
         $this->assign($rows);
+        
+        //1.读取品牌列表
+        $this->assign('brand_list', D('Brand')->getList());
+        //2.读取供应商列表
+        $this->assign('supplier_list', D('Supplier')->getList());
+        //3.获取商品分类列表
+//        $goods_categories = D('GoodsCategory')->getList('id,name');
+//        $goods_category_list = array();
+//        foreach($goods_categories as $category){
+//            $goods_category_list[$category['id']]=$category;
+//        }
+        $goods_category_list = index2assoc(D('GoodsCategory')->getList('id,name'),'id');
+        $this->assign('goods_category_list', $goods_category_list);
+        
+        
         $this->display();
     }
 
