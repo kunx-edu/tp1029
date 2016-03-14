@@ -8,11 +8,15 @@
  * @param string $name 表单提交的控件name属性
  * @return string 具体下拉列表的html代码
  */
-function arr2select(array $data, $value_field, $name_field, $name = '') {
+function arr2select(array $data, $value_field, $name_field, $name = '', $selected_value = '') {
     $html = "<select name='$name' class='$name'>";
-    $html .= '<option value="0">请选择...</option>';
+    $html .= '<option value="">请选择...</option>';
     foreach ($data as $item) {
-        $html .= "<option value='{$item[$value_field]}'>{$item[$name_field]}</option>";
+        if ($selected_value == $item[$value_field]) {
+            $html .= "<option value='{$item[$value_field]}' selected='selected'>{$item[$name_field]}</option>";
+        } else {
+            $html .= "<option value='{$item[$value_field]}'>{$item[$name_field]}</option>";
+        }
     }
     $html .= "</select>";
     return $html;
@@ -29,4 +33,31 @@ function index2assoc(array $data, $index_name = 'id') {
         $return[$item[$index_name]] = $item;
     }
     return $return;
+}
+
+/**
+ * 一位数组转换成下拉列表
+ * @param array $data
+ * @param string $name
+ * @return string
+ */
+function onearr2select(array $data, $name = '', $selected_value = '') {
+    
+    
+    $html = "<select name='$name' class='$name'>";
+    $html .= '<option value="">请选择...</option>';
+    foreach ($data as $key => $value) {
+        $key = (string)$key;
+        /**
+         * 在弱类型中,0 false '' null  使用==都一样
+         * 并且在post和get的数据传输中都是字符串
+         */
+        if ($selected_value === $key) {
+            $html .= "<option value='$key' selected='selected'>$value</option>";
+        } else {
+            $html .= "<option value='$key'>$value</option>";
+        }
+    }
+    $html .= "</select>";
+    return $html;
 }

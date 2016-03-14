@@ -4,6 +4,24 @@ namespace Admin\Model;
 
 class GoodsModel extends \Think\Model {
 
+    /**
+     * 商品推荐状态
+     * @var array 
+     */
+    public $goods_statuses = array(
+        1=>'精品',
+        2=>'新品',
+        4=>'热销',
+    );
+    /**
+     * 商品上架状态
+     * @var array 
+     */
+    public $is_on_sales = array(
+        1=>'上架',
+        0=>'下架',
+    );
+    
     protected $_validate = array(
 //当填写货号时应当保证货号不重复
         array('sn', '', '货号已存在', self::VALUE_VALIDATE, 'unique', self::MODEL_INSERT),
@@ -116,6 +134,7 @@ class GoodsModel extends \Think\Model {
             $value['is_hot']  = ($value['goods_status'] & 4) ? 1 : 0;
             $rows[$key]       = $value;
         }
+        echo $this->getLastSql();
         return array('page_html' => $page_html, 'rows' => $rows);
     }
 

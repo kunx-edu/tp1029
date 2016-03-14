@@ -23,9 +23,31 @@ class GoodsController extends \Think\Controller {
      */
     public function index() {
         $keyword = I('get.keyword', '');
-        $cond    = array(
-            'name' => array('like', '%' . $keyword . '%'),
-        );
+        $cond = array();
+        if($keyword){
+            $cond['name'] = array('like', '%' . $keyword . '%');
+        }
+        
+        $goods_category_id = I('get.goods_category_id');
+        if($goods_category_id){
+            $cond['goods_category_id'] = $goods_category_id;
+        }
+        
+        $brand_id = I('get.brand_id');
+        if($brand_id){
+            $cond['brand_id'] = $brand_id;
+        }
+        
+        $goods_status = I('get.goods_status');
+        if($goods_status){
+            //goods_status & 2
+            $cond[] = 'goods_status & ' . $goods_status;
+        }
+        
+        $is_on_sale = I('get.is_on_sale');
+        if($is_on_sale){
+            $cond['is_on_sale'] = $is_on_sale;
+        }
         $page    = I('get.p', 1);
         $rows    = $this->_model->getPageResult($cond, $page);
         $this->assign($rows);
@@ -35,13 +57,10 @@ class GoodsController extends \Think\Controller {
         //2.读取供应商列表
         $this->assign('supplier_list', D('Supplier')->getList());
         //3.获取商品分类列表
-//        $goods_categories = D('GoodsCategory')->getList('id,name');
-//        $goods_category_list = array();
-//        foreach($goods_categories as $category){
-//            $goods_category_list[$category['id']]=$category;
-//        }
         $goods_category_list = index2assoc(D('GoodsCategory')->getList('id,name'),'id');
         $this->assign('goods_category_list', $goods_category_list);
+        $this->assign('goods_status_list', $this->_model->goods_statuses);
+        $this->assign('is_on_sale_list', $this->_model->is_on_sales);
         
         
         $this->display();
