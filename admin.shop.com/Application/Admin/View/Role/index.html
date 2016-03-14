@@ -40,7 +40,7 @@
                 <td align="center"><img src="__IMG__/{$row.status}.gif" onclick="change_status({$row.id},1-{$row.status})"/></td>
                 <td align="center">
                     <a href="{:U('edit',array('id'=>$row['id']))}" title="编辑">编辑</a> |
-                    <a href="{:U('changeStatus',array('id'=>$row['id']))}" title="移除">移除</a> 
+                    <a href="{:U('delete',array('id'=>$row['id']))}" title="移除">移除</a> 
                 </td>
             </tr>
             </foreach>

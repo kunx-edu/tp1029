@@ -1,18 +1,8 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 namespace Admin\Model;
 
-/**
- * Description of RoleModel
- *
- * @author qingf
- */
 class RoleModel extends \Think\Model {
 
     protected $_validate = array(
@@ -44,7 +34,7 @@ class RoleModel extends \Think\Model {
     }
 
     /**
-     * 
+     * 添加角色-权限关系
      * @param type $role_id
      */
     private function _addRolePermission($role_id) {
@@ -91,6 +81,10 @@ class RoleModel extends \Think\Model {
         return $row;
     }
 
+    /**
+     * 修改角色
+     * @return boolean
+     */
     public function updateRole() {
         $request_data = $this->data;
         $this->startTrans();
@@ -102,10 +96,7 @@ class RoleModel extends \Think\Model {
         }
 
         //保存角色权限对应关系
-        $cond = array(
-            'role_id' => $request_data['id'],
-        );
-        if(M('RolePermission')->where($cond)->delete()===false){
+        if($this->_deletePermission($request_data['id'])===false){
             $this->error = '删除原权限关系失败';
             $this->rollback();
             return false;
@@ -118,5 +109,49 @@ class RoleModel extends \Think\Model {
         $this->commit();
         return true;
     }
+    
+    
+    /**
+     * 删除角色
+     * @param integer $id
+     */
+    public function deleteRole($id){
+        $this->startTrans();
+        //1.删除角色,使用物理删除
+//        if($this->delete($id) === false){
+//            $this->error = '删除角色失败';
+//            $this->rollback();
+//            return false;
+//        }
+        
+        //1.删除角色,使用逻辑删除
+        $cond = array(
+            'id'=>$id,
+        );
+        if($this->where($cond)->setField('status',0)=== false){
+            $this->error = '删除角色失败';
+            $this->rollback();
+            return false;
+        }
+        //2.删除角色-权限对应关系
+        if($this->_deletePermission($id)===false){
+            $this->error = '删除权限关系失败';
+            $this->rollback();
+            return false;
+        }
+        $this->commit();
+        return true;
+    }
 
+    /**
+     * 删除角色和权限对应关系
+     * @param integer $role_id
+     * @return boolean|integer
+     */
+    private function _deletePermission($role_id){
+        $cond = array(
+            'role_id' => $role_id,
+        );
+        return M('RolePermission')->where($cond)->delete();
+    }
 }

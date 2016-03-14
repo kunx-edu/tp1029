@@ -54,7 +54,7 @@ class RoleController extends \Think\Controller {
 
     /**
      * 修改角色
-     * @param type $id
+     * @param integer $id
      */
     public function edit($id) {
         if (IS_POST) {
@@ -75,7 +75,10 @@ class RoleController extends \Think\Controller {
     }
 
     public function delete($id) {
-        
+        if($this->_model->deleteRole($id) === false){
+            $this->error($this->_model->getError());
+        }
+        $this->success('删除角色成功', U('index'));
     }
 
     private function _before_view() {
