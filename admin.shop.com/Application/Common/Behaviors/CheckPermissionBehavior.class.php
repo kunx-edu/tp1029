@@ -16,19 +16,21 @@ class CheckPermissionBehavior extends \Think\Behavior{
          */
         
         $userinfo = login();
-        $admin_id = $userinfo['id'];
-        $sql = "SELECT   DISTINCT path FROM  admin_role AS ar LEFT JOIN role_permission AS rp     ON ar.`role_id` = rp.`role_id`   LEFT JOIN permission AS p ON rp.`permission_id`=p.`id` WHERE admin_id = $admin_id AND path<>''";
-        $role_permissions = M()->query($sql);
         $paths = array();
-        foreach($role_permissions as $role_permission){
-            $paths[] = $role_permission['path'];
-        }
-        
-        //获取额外权限
-        $sql = "SELECT DISTINCT path FROM  admin_permission AS ap   LEFT JOIN permission AS p     ON ap.`permission_id` = p.`id` WHERE admin_id = $admin_id  AND path <> ''";
-        $admin_permissions = M()->query($sql);
-        foreach ($admin_permissions as $admin_permission){
-            $paths[] =$admin_permission['path'];
+        if($userinfo){
+            $admin_id = $userinfo['id'];
+            $sql = "SELECT   DISTINCT path FROM  admin_role AS ar LEFT JOIN role_permission AS rp     ON ar.`role_id` = rp.`role_id`   LEFT JOIN permission AS p ON rp.`permission_id`=p.`id` WHERE admin_id = $admin_id AND path<>''";
+            $role_permissions = M()->query($sql);
+            foreach($role_permissions as $role_permission){
+                $paths[] = $role_permission['path'];
+            }
+
+            //获取额外权限
+            $sql = "SELECT DISTINCT path FROM  admin_permission AS ap   LEFT JOIN permission AS p     ON ap.`permission_id` = p.`id` WHERE admin_id = $admin_id  AND path <> ''";
+            $admin_permissions = M()->query($sql);
+            foreach ($admin_permissions as $admin_permission){
+                $paths[] =$admin_permission['path'];
+            }
         }
         $ignore = C('ACCESS_ACTIONS');
         $paths = array_merge($paths,$ignore);

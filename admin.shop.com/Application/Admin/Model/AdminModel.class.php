@@ -230,6 +230,7 @@ class AdminModel extends \Think\Model {
     
     
     public function login(){
+        
         //验证验证码
         $captcha = I('post.captcha');
         $verify = new \Think\Verify;
@@ -267,6 +268,22 @@ class AdminModel extends \Think\Model {
         //将用户的信息保存到session中
 //        session('userinfo',$userinfo);
         login($userinfo);
+        
+        //判断是否要自动登陆
+        if(I('post.remember')){
+            //保存cookie和数据表中
+            $data = array(
+                'admin_id'=>$userinfo['id'],
+                'token'=>  createToken(),
+            );
+            //存到数据表中
+            M('AdminToken')->add($data);
+            //存cookie
+//            $data = serialize($data);
+            token($data);
+        }else{
+            cookie('token',null);
+        }
         
         //返回成功还是失败
         return true;

@@ -59,6 +59,7 @@ return array(
     'TMPL_CACHE_ON'     => false,
     'ACCESS_ACTIONS'     => array(
         'Admin/Admin/login',
+        'Admin/Admin/logout',
         'Admin/Verify/verify',
         'Admin/Index/index',
         'Admin/Index/top',

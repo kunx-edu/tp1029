@@ -116,5 +116,18 @@ class AdminController extends \Think\Controller {
         $rows = D('Permission')->getList();
         $this->assign('permissions', json_encode($rows));
     }
+    
+    
+    public function logout(){
+        $userinfo = login();
+        $admin_id = $userinfo['id'];
+        //删除token数据表中当前用户的数据
+        M('AdminToken')->where(array('admin_id'=>$admin_id))->delete();
+        //删除cookie中用户的数据
+        token(array());
+        //删除session
+        session(null);
+        $this->success('退出成功',U('login'));
+    }
 
 }
