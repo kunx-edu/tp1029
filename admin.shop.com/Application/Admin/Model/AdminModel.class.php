@@ -264,6 +264,10 @@ class AdminModel extends \Think\Model {
         );
         $this->save($data);
         
+        //将用户的信息保存到session中
+//        session('userinfo',$userinfo);
+        login($userinfo);
+        
         //返回成功还是失败
         return true;
     }

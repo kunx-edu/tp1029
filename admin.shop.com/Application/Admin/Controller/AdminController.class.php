@@ -96,11 +96,9 @@ class AdminController extends \Think\Controller {
      */
     public function login(){
         if(IS_POST){
-            
             if ($this->_model->login() === false) {
                 $this->error($this->_model->getError());
             }
-            
             $this->success('登录成功', U('Index/index'));
         }else{
             $this->display();

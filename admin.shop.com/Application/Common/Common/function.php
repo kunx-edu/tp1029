@@ -71,3 +71,15 @@ function onearr2select(array $data, $name = '', $selected_value = '') {
 function my_mcrypt($string,$salt){
     return md5(md5($string).$salt);
 }
+
+
+/**
+ * 保存和获取用户的信息(session)
+ */
+function login($data = null){
+    if($data){
+        session('userinfo',$data);
+    }else{
+        return session('userinfo');
+    }
+}
