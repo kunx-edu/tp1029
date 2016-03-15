@@ -90,6 +90,22 @@ class AdminController extends \Think\Controller {
 
         $this->success('删除管理员成功', U('index'));
     }
+    
+    /**
+     * 后台管理员登陆
+     */
+    public function login(){
+        if(IS_POST){
+            
+            if ($this->_model->login() === false) {
+                $this->error($this->_model->getError());
+            }
+            
+            $this->success('登录成功', U('Index/index'));
+        }else{
+            $this->display();
+        }
+    }
 
     /**
      * 获取角色和权限列表

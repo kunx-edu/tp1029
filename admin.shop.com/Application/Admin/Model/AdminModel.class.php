@@ -17,10 +17,10 @@ class AdminModel extends \Think\Model {
 
     protected $_validate = array(
         array('username', 'require', '用户名不能为空', self::EXISTS_VALIDATE, '', self::MODEL_BOTH),
-        array('username', '', '用户名已存在', self::EXISTS_VALIDATE, 'unique', self::MODEL_BOTH),
+        array('username', '', '用户名已存在', self::EXISTS_VALIDATE, 'unique', self::MODEL_INSERT),
         array('password', 'require', '密码不能为空', self::EXISTS_VALIDATE, '', self::MODEL_BOTH),
-        array('email', 'require', '邮箱不能为空', self::EXISTS_VALIDATE, '', self::MODEL_BOTH),
-        array('email', '', '邮箱已存在', self::EXISTS_VALIDATE, 'unique', self::MODEL_BOTH),
+        array('email', 'require', '邮箱不能为空', self::EXISTS_VALIDATE, '', self::MODEL_INSERT),
+        array('email', '', '邮箱已存在', self::EXISTS_VALIDATE, 'unique', self::MODEL_INSERT),
     );
     protected $_auto     = array(
         array('salt', '\Org\Util\String::randString', self::MODEL_INSERT, 'function'),
@@ -127,15 +127,6 @@ class AdminModel extends \Think\Model {
     public function updateAdmin() {
         $request_data = $this->data;
         $this->startTrans();
-//        $this->data['password'] = my_mcrypt($this->data['password'], $this->data['salt']);
-        //保存管理员基本信息
-//        var_dump($this->data);
-//        exit;
-//        if ($this->save() === false) {
-//            $this->error = '添加管理员失败';
-//            $this->rollback();
-//            return false;
-//        }
         //保存管理员-角色
         if ($this->_deleteRole($request_data['id']) === false) {
             $this->error = '删除原有管理员角色关联失败';
@@ -164,6 +155,11 @@ class AdminModel extends \Think\Model {
         return true;
     }
 
+    /**
+     * 获取用户详细信息,包括角色和特殊权限
+     * @param type $admin_id
+     * @return type
+     */
     public function getAdminInfo($admin_id) {
         $row = $this->find($admin_id);
         if ($row) {
@@ -229,6 +225,46 @@ class AdminModel extends \Think\Model {
         }
 
         $this->commit();
+        return true;
+    }
+    
+    
+    public function login(){
+        //验证验证码
+        $captcha = I('post.captcha');
+        $verify = new \Think\Verify;
+        if($verify->check($captcha) === false){
+            $this->error = '验证码不正确';
+            return false;
+        }
+        //验证用户名和密码是否为空
+        $username = I('post.username');
+        $password = I('post.password');
+        if(empty($username) || empty($password)){
+            $this->error = '用户名或密码不能为空';
+            return false;
+        }
+        //验证是否有此用户
+        if(!$userinfo = $this->getByUsername($username)){
+            $this->error = '用户不存在';
+            return false;
+        }
+        //验证密码是否匹配
+        $salt = $userinfo['salt'];
+        $password = my_mcrypt($password, $salt);
+        if($password != $userinfo['password']){
+            $this->error = '密码不正确';
+            return false;
+        }
+        //记录用户最后登录时间和ip
+        $data = array(
+            'id'=>$userinfo['id'],
+            'last_login_time'=>NOW_TIME,
+            'last_login_ip'=>  get_client_ip(1),
+        );
+        $this->save($data);
+        
+        //返回成功还是失败
         return true;
     }
 
