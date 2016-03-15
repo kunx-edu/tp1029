@@ -124,7 +124,7 @@ class AdminController extends \Think\Controller {
         //删除token数据表中当前用户的数据
         M('AdminToken')->where(array('admin_id'=>$admin_id))->delete();
         //删除cookie中用户的数据
-        token(array());
+        cookie(null);
         //删除session
         session(null);
         $this->success('退出成功',U('login'));

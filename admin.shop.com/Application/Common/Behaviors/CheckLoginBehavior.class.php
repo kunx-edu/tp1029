@@ -34,8 +34,10 @@ class CheckLoginBehavior extends \Think\Behavior {
         );
         token($data);
         //记录token到数据表
-        M('AdminToken')->add($data);
-        exit;
+        $cond = array(
+            'admin_id' => $userinfo['id'],
+        );
+        M('AdminToken')->where($cond)->save($data);
     }
 
 }

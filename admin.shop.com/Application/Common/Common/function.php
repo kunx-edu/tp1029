@@ -104,7 +104,7 @@ function createToken($len = 32){
 function token($data=null){
     if(is_null($data)){
         $data = serialize($data);
-        cookie('token',$data);
+        cookie('token',$data,604800);//存7天
     }else{
         $token = cookie('token');
         return unserialize($token);
