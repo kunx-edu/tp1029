@@ -29,7 +29,4 @@ define('APP_PATH',ROOT_PATH.'/Application/');
 
 // 引入ThinkPHP入口文件
 require dirname(ROOT_PATH) . '/ThinkPHP/ThinkPHP.php';
-//header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-//header("Cache-Control: no-cache, must-revalidate");
-//header("Pragma: no-cache");
 // 亲^_^ 后面不需要任何代码了 就是如此简单

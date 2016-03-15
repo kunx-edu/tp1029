@@ -3,30 +3,18 @@
 <head>
 <title>ECSHOP 管理中心</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<js href="__JS__/jquery.min.js"/>
 <script type="Text/Javascript" language="JavaScript">
-
-if (window.top != window) {
-    window.top.location.href = document.location.href;
-}
-$(function(){
-    //使用附加参数解决缓存问题
-    //todo:将会导致两倍请求
-//    console.debug($('frame'))
-    var frames = $('frame');
-    frames.each(function(){
-        this.src += '?t=' + new Date().getTime();
-        console.debug(this)
-    });
-});
+    if (window.top != window) {
+        window.top.location.href = document.location.href;
+    }
 </script>
 
 
 <frameset rows="76,*" framespacing="0" border="0">
-    <frame src="{:U('top')}" id="header-frame" name="header-frame" frameborder="no" scrolling="no">
+    <frame src="{:U('top',array('t'=>NOW_TIME))}" id="header-frame" name="header-frame" frameborder="no" scrolling="no">
     <frameset cols="180,*" framespacing="0" border="0" id="frame-body">
-        <frame src="{:U('menu')}" id="menu-frame" name="menu-frame" frameborder="no">
-        <frame src="{:U('main')}" id="main-frame" name="main-frame" frameborder="no">
+        <frame src="{:U('menu',array('t'=>NOW_TIME))}" id="menu-frame" name="menu-frame" frameborder="no">
+        <frame src="{:U('main',array('t'=>NOW_TIME))}" id="main-frame" name="main-frame" frameborder="no">
     </frameset>
 </frameset>
 </head>
