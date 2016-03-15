@@ -31,7 +31,7 @@ class PermissionModel extends \Think\Model {
      */
     public function getList() {
         $cond = array('status' => array('gt', 0));
-        return $this->where($cond)->select();
+        return $this->where($cond)->order('lft asc')->select();
     }
 
     /**

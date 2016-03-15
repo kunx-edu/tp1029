@@ -84,7 +84,11 @@ class DbMysqlLogic implements DbMysql{
         $sql_tmp = implode(',', $sql_tmp);
         $sql = str_replace('?%', $sql_tmp, $sql);
 //        echo $sql . '<br />';
-        return M()->execute($sql);
+        if(M()->execute($sql) !== false){
+            return M()->getLastInsID();
+        }else{
+            return false;
+        }
     }
 
     /**
