@@ -110,3 +110,25 @@ function token($data=null){
         return unserialize($token);
     }
 }
+
+
+/**
+ * 保存和获取用户的可以操作的路径(session)
+ */
+function paths($data = null){
+    if($data){
+        session('paths',$data);
+    }else{
+        return session('paths');
+    }
+}
+/**
+ * 保存和获取用户可以操作的权限id(session)
+ */
+function pids($data = null){
+    if($data){
+        session('pids',$data);
+    }else{
+        return session('pids');
+    }
+}

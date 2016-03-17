@@ -9,6 +9,8 @@ class IndexController extends Controller {
         $this->display();
     }
     public function menu(){
+        $menus = D('Menu')->getAdminMenu();
+        $this->assign('menus', $menus);
         $this->display();
     }
     public function main(){

@@ -123,12 +123,12 @@
         <div id="main-div">
             <div id="menu-list">
                 <ul id="menu-ul">
-                    <foreach name='Think.session.menus' item='top_menu'>
+                    <foreach name='menus' item='top_menu'>
                         <eq name='top_menu.level' value='1'>
                             <li class="explode" key="" name="menu">
                                 {$top_menu.name}
                                 <ul>
-                                    <foreach name='Think.session.menus' item='son_menu'>
+                                    <foreach name='menus' item='son_menu'>
                                         <eq name='son_menu.parent_id' value='$top_menu["id"]'>
                                             <li class="menu-item"><a href="{:U($son_menu['path'])}" target="main-frame">{$son_menu.name}</a></li>
                                         </eq>

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Admin\Model;
 
 class RoleModel extends \Think\Model {
@@ -94,12 +93,12 @@ class RoleModel extends \Think\Model {
         }
 
         //保存角色权限对应关系
-        if($this->_deletePermission($request_data['id'])===false){
+        if ($this->_deletePermission($request_data['id']) === false) {
             $this->error = '删除原权限关系失败';
             $this->rollback();
             return false;
         }
-        if($this->_addRolePermission($request_data['id'])===false){
+        if ($this->_addRolePermission($request_data['id']) === false) {
             $this->error = '更新权限关系失败';
             $this->rollback();
             return false;
@@ -107,32 +106,25 @@ class RoleModel extends \Think\Model {
         $this->commit();
         return true;
     }
-    
-    
+
     /**
      * 删除角色
      * @param integer $id
      */
-    public function deleteRole($id){
+    public function deleteRole($id) {
         $this->startTrans();
-        //1.删除角色,使用物理删除
-//        if($this->delete($id) === false){
-//            $this->error = '删除角色失败';
-//            $this->rollback();
-//            return false;
-//        }
-        
+
         //1.删除角色,使用逻辑删除
         $cond = array(
-            'id'=>$id,
+            'id' => $id,
         );
-        if($this->where($cond)->setField('status',0)=== false){
+        if ($this->where($cond)->setField('status', 0) === false) {
             $this->error = '删除角色失败';
             $this->rollback();
             return false;
         }
         //2.删除角色-权限对应关系
-        if($this->_deletePermission($id)===false){
+        if ($this->_deletePermission($id) === false) {
             $this->error = '删除权限关系失败';
             $this->rollback();
             return false;
@@ -146,11 +138,24 @@ class RoleModel extends \Think\Model {
      * @param integer $role_id
      * @return boolean|integer
      */
-    private function _deletePermission($role_id){
+    private function _deletePermission($role_id) {
         $cond = array(
             'role_id' => $role_id,
         );
         return M('RolePermission')->where($cond)->delete();
+    }
+
+    /**
+     * 
+     * @param type $admin_id
+     */
+    public function getAdminRolePermission($admin_id) {
+        //select id,path from role_permission as rp left join permission as p on rp.permission_id = p.id left join admin_role as ar on ar.role_id=rp.role_id where admin_id=1
+        $cond = array(
+            'admin_id' => $admin_id,
+            'path'     => array('neq', ''),
+        );
+        return $this->field('DISTINCT id,path')->table('__ROLE_PERMISSION__ as rp')->join('LEFT JOIN __PERMISSION__ as p on rp.permission_id=p.id')->join('LEFT JOIN __ADMIN_ROLE__ as ar on ar.role_id=rp.role_id')->where($cond)->select();
     }
 
 }

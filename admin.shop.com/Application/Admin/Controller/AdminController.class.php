@@ -90,17 +90,58 @@ class AdminController extends \Think\Controller {
 
         $this->success('删除管理员成功', U('index'));
     }
-    
+
     /**
      * 后台管理员登陆
      */
-    public function login(){
-        if(IS_POST){
-            if ($this->_model->login() === false) {
+    public function login() {
+        if (IS_POST) {
+            if (($userinfo = $this->_model->login()) === false) {
                 $this->error($this->_model->getError());
             }
+            //将用户数据保存
+            //将用户的信息保存到session中
+            login($userinfo);
+            //获取并保存用户的角色拥有的权限
+            $paths            = array();
+            $pids             = array();
+            $role_permissions = D('Role')->getAdminRolePermission($userinfo['id']);
+            foreach ($role_permissions as $role_permission) {
+                $paths[] = $role_permission['path'];
+                $pids[]  = $role_permission['id'];
+            }
+            //获取用户的额外权限
+            $admin_permissions = $this->_model->getAdminPermission($userinfo['id']);
+            foreach ($admin_permissions as $admin_permission) {
+                $paths[] = $admin_permission['path'];
+                $pids[]  = $admin_permission['id'];
+            }
+            //将用户所拥有的path列表放到session中
+            paths($paths);
+            pids($pids);
+//            var_dump($paths);
+//            session('paths',$paths);
+//            session('pids',$pids);
+//            $paths = array_merge($paths,$ignore);
+            //取出菜单列表
+            exit;
+            //判断是否要自动登陆
+            if (I('post.remember')) {
+                //保存cookie和数据表中
+                $data = array(
+                    'admin_id' => $userinfo['id'],
+                    'token'    => createToken(),
+                );
+                //存到数据表中
+                M('AdminToken')->add($data);
+                //存cookie
+                token($data);
+            } else {
+                cookie('token', null);
+            }
+
             $this->success('登录成功', U('Index/index'));
-        }else{
+        } else {
             $this->display();
         }
     }
@@ -116,18 +157,17 @@ class AdminController extends \Think\Controller {
         $rows = D('Permission')->getList();
         $this->assign('permissions', json_encode($rows));
     }
-    
-    
-    public function logout(){
+
+    public function logout() {
         $userinfo = login();
         $admin_id = $userinfo['id'];
         //删除token数据表中当前用户的数据
-        M('AdminToken')->where(array('admin_id'=>$admin_id))->delete();
+        M('AdminToken')->where(array('admin_id' => $admin_id))->delete();
         //删除cookie中用户的数据
         cookie(null);
         //删除session
         session(null);
-        $this->success('退出成功',U('login'));
+        $this->success('退出成功', U('login'));
     }
 
 }

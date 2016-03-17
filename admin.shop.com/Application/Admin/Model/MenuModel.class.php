@@ -167,5 +167,23 @@ class MenuModel extends \Think\Model {
 
         return $row;
     }
+    
+    /**
+     * 获取当前管理员可见的菜单
+     */
+    public function getAdminMenu(){
+        //取出所有的菜单列表
+        $pids = session('pids');
+        if(!$pids){
+            return array();
+        }
+        //获取菜单列表
+        $userinfo = login();
+        //select id,name,level,parent_id,path from menu as m left join menu_permission as mp on m.id=mp.menu_id where mp.permission_id in (1,2,3,5)
+        $cond = array(
+            'mp.permission_id'=>array('in',$pids),
+        );
+        return $this->field('DISTINCT id,name,level,parent_id,path')->alias('m')->join('LEFT JOIN __MENU_PERMISSION__ as mp on m.id=mp.menu_id')->where($cond)->select();
+    }
 
 }

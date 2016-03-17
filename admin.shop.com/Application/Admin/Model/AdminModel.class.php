@@ -234,10 +234,10 @@ class AdminModel extends \Think\Model {
         //验证验证码
         $captcha = I('post.captcha');
         $verify = new \Think\Verify;
-        if($verify->check($captcha) === false){
-            $this->error = '验证码不正确';
-            return false;
-        }
+//        if($verify->check($captcha) === false){
+//            $this->error = '验证码不正确';
+//            return false;
+//        }
         //验证用户名和密码是否为空
         $username = I('post.username');
         $password = I('post.password');
@@ -264,29 +264,17 @@ class AdminModel extends \Think\Model {
             'last_login_ip'=>  get_client_ip(1),
         );
         $this->save($data);
-        
-        //将用户的信息保存到session中
-//        session('userinfo',$userinfo);
-        login($userinfo);
-        
-        //判断是否要自动登陆
-        if(I('post.remember')){
-            //保存cookie和数据表中
-            $data = array(
-                'admin_id'=>$userinfo['id'],
-                'token'=>  createToken(),
-            );
-            //存到数据表中
-            M('AdminToken')->add($data);
-            //存cookie
-//            $data = serialize($data);
-            token($data);
-        }else{
-            cookie('token',null);
-        }
-        
-        //返回成功还是失败
-        return true;
+        //将用户数据返回给控制器
+        return $userinfo;
+    }
+    
+    
+    public function getAdminPermission($admin_id){
+        $cond = array(
+            'admin_id'=>$admin_id,
+            'path'=>array('neq',''),
+        );
+        return $this->field('DISTINCT id,path')->table('__ADMIN_PERMISSION__ as ap')->join('LEFT JOIN __PERMISSION__ as p ON ap.permission_id=p.id')->where($cond)->select();
     }
 
 }
