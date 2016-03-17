@@ -124,7 +124,6 @@ class AdminController extends \Think\Controller {
 //            session('pids',$pids);
 //            $paths = array_merge($paths,$ignore);
             //取出菜单列表
-            exit;
             //判断是否要自动登陆
             if (I('post.remember')) {
                 //保存cookie和数据表中

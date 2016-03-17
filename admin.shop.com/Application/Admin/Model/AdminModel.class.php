@@ -234,10 +234,10 @@ class AdminModel extends \Think\Model {
         //验证验证码
         $captcha = I('post.captcha');
         $verify = new \Think\Verify;
-//        if($verify->check($captcha) === false){
-//            $this->error = '验证码不正确';
-//            return false;
-//        }
+        if($verify->check($captcha) === false){
+            $this->error = '验证码不正确';
+            return false;
+        }
         //验证用户名和密码是否为空
         $username = I('post.username');
         $password = I('post.password');
@@ -268,13 +268,45 @@ class AdminModel extends \Think\Model {
         return $userinfo;
     }
     
-    
+    /**
+     * 获取用户的额外权限
+     * @param type $admin_id
+     * @return type
+     */
     public function getAdminPermission($admin_id){
         $cond = array(
             'admin_id'=>$admin_id,
             'path'=>array('neq',''),
         );
         return $this->field('DISTINCT id,path')->table('__ADMIN_PERMISSION__ as ap')->join('LEFT JOIN __PERMISSION__ as p ON ap.permission_id=p.id')->where($cond)->select();
+    }
+    
+    public function autoLogin(){
+        $token = cookie('token');
+        if (!$token) {
+            return false;
+        }
+
+        //判断token是否合法
+        $token = token();
+        if (!M('AdminToken')->where($token)->count()) {
+            return false;
+        }
+        //获取用户信息,保存到session中
+        $userinfo = M('Admin')->find($token['admin_id']);
+        login($userinfo);//保存到session中
+        
+        //更新token
+        $data     = array(
+            'admin_id' => $userinfo['id'],
+            'token'    => createToken(),
+        );
+        token($data);
+        //记录token到数据表
+        $cond = array(
+            'admin_id' => $userinfo['id'],
+        );
+        M('AdminToken')->where($cond)->save($data);
     }
 
 }

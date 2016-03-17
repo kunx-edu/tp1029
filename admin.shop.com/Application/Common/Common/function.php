@@ -80,7 +80,11 @@ function login($data = null){
     if($data){
         session('userinfo',$data);
     }else{
-        return session('userinfo');
+        $userinfo = session('userinfo');
+        if(!$userinfo){
+            $userinfo = array();
+        }
+        return $userinfo;
     }
 }
 
@@ -107,7 +111,12 @@ function token($data=null){
         cookie('token',$data,604800);//存7天
     }else{
         $token = cookie('token');
-        return unserialize($token);
+        if(!$token){
+            $token = array();
+        }else{
+            $token = unserialize($token);
+        }
+        return $token;
     }
 }
 
@@ -119,7 +128,11 @@ function paths($data = null){
     if($data){
         session('paths',$data);
     }else{
-        return session('paths');
+        $paths = session('paths');
+        if(!$paths){
+            $paths = array();
+        }
+        return $paths;
     }
 }
 /**
@@ -129,6 +142,10 @@ function pids($data = null){
     if($data){
         session('pids',$data);
     }else{
-        return session('pids');
+        $pids =  session('pids');
+        if(!$pids){
+            $pids = array();
+        }
+        return $pids;
     }
 }
