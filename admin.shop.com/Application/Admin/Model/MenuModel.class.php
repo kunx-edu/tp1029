@@ -182,6 +182,7 @@ class MenuModel extends \Think\Model {
         //select id,name,level,parent_id,path from menu as m left join menu_permission as mp on m.id=mp.menu_id where mp.permission_id in (1,2,3,5)
         $cond = array(
             'mp.permission_id'=>array('in',$pids),
+            'status'=>array('gt',0),
         );
         return $this->field('DISTINCT id,name,level,parent_id,path')->alias('m')->join('LEFT JOIN __MENU_PERMISSION__ as mp on m.id=mp.menu_id')->where($cond)->select();
     }

@@ -21,6 +21,8 @@ class AdminModel extends \Think\Model {
         array('password', 'require', '密码不能为空', self::EXISTS_VALIDATE, '', self::MODEL_BOTH),
         array('email', 'require', '邮箱不能为空', self::EXISTS_VALIDATE, '', self::MODEL_INSERT),
         array('email', '', '邮箱已存在', self::EXISTS_VALIDATE, 'unique', self::MODEL_INSERT),
+        array('password', 'require', '密码不能为空', self::EXISTS_VALIDATE, '', 5),
+        array('repassword', 'password', '密码必须一致', self::EXISTS_VALIDATE, 'confirm', 5),
     );
     protected $_auto     = array(
         array('salt', '\Org\Util\String::randString', self::MODEL_INSERT, 'function'),
@@ -227,62 +229,70 @@ class AdminModel extends \Think\Model {
         $this->commit();
         return true;
     }
-    
-    
-    public function login(){
-        
+
+    public function login() {
+
         //验证验证码
         $captcha = I('post.captcha');
-        $verify = new \Think\Verify;
-        if($verify->check($captcha) === false){
+        $verify  = new \Think\Verify;
+        if ($verify->check($captcha) === false) {
             $this->error = '验证码不正确';
             return false;
         }
         //验证用户名和密码是否为空
         $username = I('post.username');
         $password = I('post.password');
-        if(empty($username) || empty($password)){
+        if (empty($username) || empty($password)) {
             $this->error = '用户名或密码不能为空';
             return false;
         }
         //验证是否有此用户
-        if(!$userinfo = $this->getByUsername($username)){
+        if (!$userinfo = $this->getByUsername($username)) {
             $this->error = '用户不存在';
             return false;
         }
         //验证密码是否匹配
-        $salt = $userinfo['salt'];
+        $salt     = $userinfo['salt'];
         $password = my_mcrypt($password, $salt);
-        if($password != $userinfo['password']){
+        if ($password != $userinfo['password']) {
             $this->error = '密码不正确';
             return false;
         }
         //记录用户最后登录时间和ip
         $data = array(
-            'id'=>$userinfo['id'],
-            'last_login_time'=>NOW_TIME,
-            'last_login_ip'=>  get_client_ip(1),
+            'id'              => $userinfo['id'],
+            'last_login_time' => NOW_TIME,
+            'last_login_ip'   => get_client_ip(1),
         );
         $this->save($data);
         //将用户数据返回给控制器
         return $userinfo;
     }
-    
+
     /**
      * 获取用户的额外权限
      * @param type $admin_id
      * @return type
      */
-    public function getAdminPermission($admin_id){
+    public function getAdminPermission($admin_id) {
         $cond = array(
-            'admin_id'=>$admin_id,
-            'path'=>array('neq',''),
+            'admin_id' => $admin_id,
+            'path'     => array('neq', ''),
         );
         return $this->field('DISTINCT id,path')->table('__ADMIN_PERMISSION__ as ap')->join('LEFT JOIN __PERMISSION__ as p ON ap.permission_id=p.id')->where($cond)->select();
     }
-    
-    public function autoLogin(){
-        $token = cookie('token');
+
+    /**
+     * 自动登陆
+     * @return boolean
+     */
+    public function autoLogin() {
+        //检查是否有session,如果有,就不用自动登陆了
+        $userinfo = login();
+        if ($userinfo) {
+            return true;
+        }
+        $token = token();
         if (!$token) {
             return false;
         }
@@ -294,10 +304,13 @@ class AdminModel extends \Think\Model {
         }
         //获取用户信息,保存到session中
         $userinfo = M('Admin')->find($token['admin_id']);
-        login($userinfo);//保存到session中
+        login($userinfo); //保存到session中
         
+        $this->setPermissionsToSession();
+        
+
         //更新token
-        $data     = array(
+        $data = array(
             'admin_id' => $userinfo['id'],
             'token'    => createToken(),
         );
@@ -307,6 +320,48 @@ class AdminModel extends \Think\Model {
             'admin_id' => $userinfo['id'],
         );
         M('AdminToken')->where($cond)->save($data);
+    }
+    
+    
+    public function setPermissionsToSession(){
+        $userinfo = login();
+        //获取并保存用户的角色拥有的权限
+        $paths            = array();
+        $pids             = array();
+        $role_permissions = D('Role')->getAdminRolePermission($userinfo['id']);
+        foreach ($role_permissions as $role_permission) {
+            $paths[] = $role_permission['path'];
+            $pids[]  = $role_permission['id'];
+        }
+        //获取用户的额外权限
+        $admin_permissions = $this->getAdminPermission($userinfo['id']);
+        foreach ($admin_permissions as $admin_permission) {
+            $paths[] = $admin_permission['path'];
+            $pids[]  = $admin_permission['id'];
+        }
+        //将用户所拥有的path列表放到session中
+        paths($paths);
+        pids($pids);
+    }
+    
+    /**
+     * 重置密码
+     * @return boolean|integer
+     */
+    public function resetPwd(){
+        $this->data['salt'] = \Org\Util\String::randString();
+        $this->data['password'] = my_mcrypt($this->data['password'], $this->data['salt']);
+        return $this->save();
+    }
+    
+    /**
+     * 重置密码
+     * @return boolean|integer
+     */
+    public function updatePwd(){
+        $this->data['salt'] = \Org\Util\String::randString();
+        $this->data['password'] = my_mcrypt($this->data['password'], $this->data['salt']);
+        return $this->save();
     }
 
 }

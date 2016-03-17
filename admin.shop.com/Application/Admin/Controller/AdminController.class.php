@@ -19,10 +19,12 @@ class AdminController extends \Think\Controller {
 
     protected function _initialize() {
         $meta_titles  = array(
-            'index'  => '管理员管理',
-            'add'    => '添加管理员',
-            'edit'   => '修改管理员',
-            'delete' => '删除管理员',
+            'index'    => '管理员管理',
+            'add'      => '添加管理员',
+            'edit'     => '修改管理员',
+            'delete'   => '删除管理员',
+            'resetPwd' => '重置管理员密码',
+            'updatePwd' => '修改管理员密码',
         );
         $meta_title   = isset($meta_titles[ACTION_NAME]) ? $meta_titles[ACTION_NAME] : '管理员管理';
         $this->assign('meta_title', $meta_title);
@@ -102,27 +104,9 @@ class AdminController extends \Think\Controller {
             //将用户数据保存
             //将用户的信息保存到session中
             login($userinfo);
-            //获取并保存用户的角色拥有的权限
-            $paths            = array();
-            $pids             = array();
-            $role_permissions = D('Role')->getAdminRolePermission($userinfo['id']);
-            foreach ($role_permissions as $role_permission) {
-                $paths[] = $role_permission['path'];
-                $pids[]  = $role_permission['id'];
-            }
-            //获取用户的额外权限
-            $admin_permissions = $this->_model->getAdminPermission($userinfo['id']);
-            foreach ($admin_permissions as $admin_permission) {
-                $paths[] = $admin_permission['path'];
-                $pids[]  = $admin_permission['id'];
-            }
-            //将用户所拥有的path列表放到session中
-            paths($paths);
-            pids($pids);
-//            var_dump($paths);
-//            session('paths',$paths);
-//            session('pids',$pids);
-//            $paths = array_merge($paths,$ignore);
+            //将用户的权限列表存放到session中
+            $this->_model->setPermissionsToSession();
+
             //取出菜单列表
             //判断是否要自动登陆
             if (I('post.remember')) {
@@ -136,6 +120,12 @@ class AdminController extends \Think\Controller {
                 //存cookie
                 token($data);
             } else {
+                //保存cookie和数据表中
+                $cond = array(
+                    'admin_id' => $userinfo['id'],
+                );
+                //存到数据表中
+                M('AdminToken')->where($cond)->delete();
                 cookie('token', null);
             }
 
@@ -167,6 +157,51 @@ class AdminController extends \Think\Controller {
         //删除session
         session(null);
         $this->success('退出成功', U('login'));
+    }
+
+    /**
+     * 重置用户的密码
+     * @param type $id
+     */
+    public function resetPwd($id) {
+        if (IS_POST) {
+            if ($this->_model->create() === false) {
+                $this->error($this->_model->getError());
+            }
+            if ($this->_model->resetPwd() === false) {
+                $this->error($this->_model->getError());
+            }
+
+            $this->success('重置管理员密码成功', U('index'));
+        } else {
+            $row             = $this->_model->find($id);
+            $row['password'] = \Org\Util\String::randString(8);
+            $this->assign('row', $row);
+            $this->display();
+        }
+    }
+
+    /**
+     * 修改密码
+     */
+    public function updatePwd() {
+        if(IS_POST){
+            if ($this->_model->create('',5) === false) {
+                $this->error($this->_model->getError());
+            }
+            if ($this->_model->updatePwd() === false) {
+                $this->error($this->_model->getError());
+            }
+
+            $this->success('修改密码成功', U('index'));
+        }else{
+            $userinfo        = login();
+            $id              = $userinfo['id'];
+            $row             = $this->_model->find($id);
+            $row['password'] = \Org\Util\String::randString(8);
+            $this->assign('row', $row);
+            $this->display();
+        }
     }
 
 }
