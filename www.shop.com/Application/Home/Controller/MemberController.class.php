@@ -2,38 +2,43 @@
 
 namespace Home\Controller;
 
-class MemberController extends \Think\Controller{
+class MemberController extends \Think\Controller {
+
     private $_model = null;
 
     protected function _initialize() {
         $meta_titles  = array(
-            'index'    => '用户管理',
-            'add'      => '添加用户',
-            'edit'     => '修改用户',
+            'index' => '用户管理',
+            'add'   => '添加用户',
+            'edit'  => '修改用户',
         );
         $meta_title   = isset($meta_titles[ACTION_NAME]) ? $meta_titles[ACTION_NAME] : '用户管理';
         $this->assign('meta_title', $meta_title);
         $this->_model = D('Member'); //由于所有的操作都需要用到模型,我们在初始化方法中创建
     }
-    
+
     /**
      * 前台用户注册
      */
-    public function register(){
-        if(IS_POST){
+    public function register() {
+        if (IS_POST) {
             //对数据合法性进行验证
-            if($this->_model->create() === false){
+            if ($this->_model->create() === false) {
                 $this->error($this->_model->getError());
             }
-            if($this->_model->addMember()===false){
+            if ($this->_model->addMember() === false) {
                 $this->error($this->_model->getError());
             }
-            $this->success('注册成功',U('Index/index'));
-        }else{
+
+            if ($this->sendMail()===false) {
+                $this->errro('邮件发送失败,请到重发邮件页面重新发送', U('Index/index'));
+            }
+            $this->success('注册成功', U('Index/index'));
+        } else {
             $this->display();
         }
     }
-    
+
     /**
      * 验证注册信息是否已经存在.
      * 用户名
@@ -41,32 +46,32 @@ class MemberController extends \Think\Controller{
      * 手机号码
      * 不能重复
      */
-    public function checkByParam(){
+    public function checkByParam() {
         $param = I('get.');
-        $flag = true;
-        if($this->_model->where($param)->count()){
-            $flag=false;
+        $flag  = true;
+        if ($this->_model->where($param)->count()) {
+            $flag = false;
         }
         echo json_encode($flag);
         exit;
     }
-    
+
     /**
      * 发送验证码,用于注册验证手机号码
      * @param type $telphone
      */
     public function sendSMS($telphone) {
-        $code = \Org\Util\String::randNumber(1000, 9999);
+        $code  = \Org\Util\String::randNumber(1000, 9999);
         $param = array(
             'code'    => $code,
             'product' => '仙人跳',
         );
-        
+
         if (sendSMS($telphone, $param)) {
             //将验证码存放到session中
-            $data = array(
-                'code'=>$code,
-                'telphone'=>$telphone,
+            $data   = array(
+                'code'     => $code,
+                'telphone' => $telphone,
             );
             tel_code($data);
             $return = array(
@@ -81,4 +86,55 @@ class MemberController extends \Think\Controller{
         $this->ajaxReturn($return);
         exit;
     }
+
+    /**
+     * 发送邮件,尝试三次,如果三次都失败,就不再尝试
+     * @return boolean
+     */
+    private function sendMail() {
+        for ($i = 0; $i < 3;  ++$i) {
+            //发送邮件
+            $address = I('post.email');
+            $subject = '欢迎注册ayiyayo商城';
+            $param   = array(
+                'email'    => $address,
+                'token' => md5(\Org\Util\String::randString(17)),
+            );
+            $url     = U('active', $param, true, true);
+            $content = <<<EMIAL
+欢迎注册,请点击以下链接激活账号：
+<a href="$url" target="_blank">$url</a>
+(如不能打开页面，请复制该地址到浏览器打开)'
+EMIAL;
+            if (sendMail($address, $content, $subject)){
+                //记录数据到数据表
+                M('EmailToken')->delete($address);
+                M('EmailToken')->add($param);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public function active($email,$token){
+        $model = M('EmailToken');
+        //判断数据表中是否有对应记录
+        $cond = array(
+            'email'=>$email,
+            'token'=>$token,
+        );
+        if(!$model->where($cond)->count()){
+            $this->error('验证信息不匹配,或者已经激活成功',U('Index/index'));
+        }
+        //如果有就激活账户
+        if($this->_model->activeMember($email) === false){
+            $this->error('激活失败,请稍后再试',U('Index/index'));
+        }
+        //删除这条记录
+        if($model->delete($email) === false){
+            $this->error('激活失败,请稍后再试',U('Index/index'));
+        }
+        $this->success('激活成功',U('Index/index'));
+    }
+
 }

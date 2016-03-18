@@ -60,4 +60,16 @@ class MemberModel extends \Think\Model{
         //返回结果
         return $this->add();
     }
+    
+    /**
+     * 通过邮箱地址激活账户
+     * @param type $email
+     * @return type
+     */
+    public function activeMember($email){
+        $cond = array(
+            'email'=>$email,
+        );
+        return $this->where($cond)->setField('status',1);
+    }
 }

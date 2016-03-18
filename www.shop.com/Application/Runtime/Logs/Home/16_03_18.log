@@ -1328,3 +1328,33 @@ INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000580s ]
 INFO: [ app_begin ] --END-- [ RunTime:0.000887s ]
 SQL: SHOW COLUMNS FROM `member` [ RunTime:0.0012s ]
 
+[ 2016-03-18T16:29:52+08:00 ] 127.0.0.1 /index.php/Member/checkByParam.html?username=zhangsan
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001065s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001406s ]
+SQL: SHOW COLUMNS FROM `member` [ RunTime:0.0018s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `member` WHERE `username` = 'zhangsan' LIMIT 1   [ RunTime:0.0005s ]
+
+[ 2016-03-18T16:30:00+08:00 ] 127.0.0.1 /index.php/Member/checkByParam.html?email=kunx%40kunx.org
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000470s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000706s ]
+SQL: SHOW COLUMNS FROM `member` [ RunTime:0.0010s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `member` WHERE `email` = 'kunx@kunx.org' LIMIT 1   [ RunTime:0.0007s ]
+
+[ 2016-03-18T16:30:02+08:00 ] 127.0.0.1 /index.php/Member/checkByParam.html?tel=17002810530
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000664s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001010s ]
+SQL: SHOW COLUMNS FROM `member` [ RunTime:0.0008s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `member` WHERE `tel` = '17002810530' LIMIT 1   [ RunTime:0.0004s ]
+
+[ 2016-03-18T16:30:02+08:00 ] 127.0.0.1 /index.php/Member/sendSMS.html?telphone=17002810530
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000817s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001283s ]
+SQL: SHOW COLUMNS FROM `member` [ RunTime:0.0013s ]
+
+[ 2016-03-18T16:30:49+08:00 ] 127.0.0.1 /index.php/Member/active/email/kunx%40kunx.org/token/0154ec7cdbaebd72c991b2dda5bf3aae.html
+ERR: 非法操作:active
+

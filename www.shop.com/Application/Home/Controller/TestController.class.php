@@ -33,4 +33,19 @@ class TestController extends \Think\Controller {
         exit;
     }
 
+    public function sendMail() {
+        //发送邮件
+        $subject = '欢迎注册ayiyayo商城';
+        $param   = array(
+            'email'    => 'kunx@kunx.org',
+            'rand_str' => md5(\Org\Util\String::randString(17)),
+        );
+        $url     = U('active', $param, true, true);
+        echo $url;
+        exit;
+        $rst     = sendMail('kunx@kunx.org', '欢迎注册仙人跳', 'welcome join us');
+        var_dump($rst);
+        exit;
+    }
+
 }
