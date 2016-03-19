@@ -9,7 +9,6 @@ class IndexController extends Controller {
         );
         $meta_title   = isset($meta_titles[ACTION_NAME]) ? $meta_titles[ACTION_NAME] : '京西商城';
         $this->assign('meta_title', $meta_title);
-//        $start = microtime(true);
         //将不常变动的数据缓存下来
         if(!$goods_categories=S('goods_categories')){
             //取出所有的商品分类
@@ -25,9 +24,6 @@ class IndexController extends Controller {
             S('article_list',$article_list);
         }
         $this->assign('article_list', $article_list);
-        $end = microtime(true);
-//        echo $end-$start;
-//        exit;
     }
     /**
      * 站点首页
