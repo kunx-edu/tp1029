@@ -27,7 +27,7 @@ return array(
     'DB_DEBUG'          => TRUE, // 数据库调试模式 开启后可以记录SQL日志
     'DB_FIELDS_CACHE'   => false, // 启用字段缓存
     'DB_CHARSET'        => 'utf8', // 数据库编码默认采用utf8
-    'PAGE_SIZE'         => 3, //每页显示多少个
+    'PAGE_SIZE'         => 20, //每页显示多少个
     'UPLOAD_SETTING'    => array(
 //        'mimes'        => array('image/jpeg', 'image/png', 'image/gif'), //允许上传的文件MiMe类型
         'maxSize'      => 1048576, //上传的文件大小限制 (0-不做限制)
