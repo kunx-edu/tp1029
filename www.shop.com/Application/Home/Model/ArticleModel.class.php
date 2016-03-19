@@ -8,6 +8,7 @@ class ArticleModel extends \Think\Model {
      * 获取首页帮助文章列表
      */
     public function getHelpArticleList() {
+//        echo 'no cache<br />';
         $cond               = array(
             'status' => array('gt', 0),
             'id'     => array('elt', 5),
