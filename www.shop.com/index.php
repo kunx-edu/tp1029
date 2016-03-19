@@ -10,7 +10,8 @@
 // +----------------------------------------------------------------------
 
 // 应用入口文件
-
+//phpinfo();
+//exit;
 // 检测PHP环境
 if(version_compare(PHP_VERSION,'5.3.0','<'))  die('require PHP > 5.3.0 !');
 
@@ -25,5 +26,7 @@ define('APP_PATH',ROOT_PATH.'/Application/');
 
 // 引入ThinkPHP入口文件
 require dirname(ROOT_PATH) . '/ThinkPHP/ThinkPHP.php';
+////session('ABC',123);
+//var_dump($_SESSION);
 
 // 亲^_^ 后面不需要任何代码了 就是如此简单
