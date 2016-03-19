@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-
+$start = microtime(true);
 // 应用入口文件
 //phpinfo();
 //exit;
@@ -23,10 +23,13 @@ define('BIND_MODULE','Home');
 define('ROOT_PATH', __DIR__ . '/');
 // 定义应用目录
 define('APP_PATH',ROOT_PATH.'/Application/');
-
+define('HTML_PATH',ROOT_PATH.'Html/');
 // 引入ThinkPHP入口文件
 require dirname(ROOT_PATH) . '/ThinkPHP/ThinkPHP.php';
 ////session('ABC',123);
 //var_dump($_SESSION);
 
 // 亲^_^ 后面不需要任何代码了 就是如此简单
+
+$end = microtime(true);
+echo $end-$start;

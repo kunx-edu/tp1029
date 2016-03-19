@@ -33,6 +33,7 @@ class IndexController extends Controller {
      * 站点首页
      */
     public function index(){
+//        echo time();
 //        $data = array('name'=>'kunx');
         //取出商品列表：热卖 新品 精品
         $model = D('Goods');
