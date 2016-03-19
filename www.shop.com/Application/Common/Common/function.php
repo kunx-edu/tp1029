@@ -9,15 +9,12 @@
 function sendSMS($telphone, $param) {
     vendor('Alidayu.Autoloader');
     $c            = new \TopClient;
+    $c->format = 'json';
     $c->appkey    = '23328756';
     $c->secretKey = 'e87ec1ad95d7c8621d74b2767a80825c';
     $req          = new \AlibabaAliqinFcSmsNumSendRequest;
     $req->setSmsType("normal");
     $req->setSmsFreeSignName("大鱼测试");
-//    $param = array(
-//        'code'=>\Org\Util\String::randNumber(1000, 9999),
-//        'product'=>'仙人跳',
-//    );
     $param        = json_encode($param);
     $req->setSmsParam($param);
     $req->setRecNum($telphone);
