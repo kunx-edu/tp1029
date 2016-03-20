@@ -125,17 +125,15 @@ class MemberModel extends \Think\Model{
         if (!$token) {
             return false;
         }
+        
 
         //判断token是否合法
-        $token = token();
         if (!M('MemberToken')->where($token)->count()) {
             return false;
         }
         //获取用户信息,保存到session中
         $userinfo = M('Member')->find($token['member_id']);
         login($userinfo); //保存到session中
-        
-        $this->setPermissionsToSession();
         
 
         //更新token

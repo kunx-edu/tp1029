@@ -298,7 +298,6 @@ class AdminModel extends \Think\Model {
         }
 
         //判断token是否合法
-        $token = token();
         if (!M('AdminToken')->where($token)->count()) {
             return false;
         }
