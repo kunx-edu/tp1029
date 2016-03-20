@@ -11,7 +11,7 @@
             </div>
             <div class="login_bd">
                 <div class="login_form fl">
-                    <form action="" method="post" id="signup">
+                    <form action="{:U('')}" method="post" id="signup">
                         <ul>
                             <li>
                                 <label for="">用户名：</label>
@@ -46,7 +46,7 @@
                                 <label for="">验证码：</label>
                                 <input type="text"  name="checkcode" />
                                 <img src="{:U('Verify/verify',array('t'=>NOW_TIME))}" alt="" />
-                                <span>看不清？<a href="">换一张</a></span><span class="err-msg"></span>
+                                <span>看不清？<a href="javascript:;" onclick="change_captcha()">换一张</a></span><span class="err-msg"></span>
                             </li>
 
                             <li>
@@ -75,7 +75,7 @@
 </block>
         <!-- 底部版权 end -->
         <block name="js">
-        <script type="text/javascript" src="__JS__/jquery.min.js"></script>
+        <js href="__JS__/jquery.min.js"/>
         <js href="__JQUERY_VALIDATION__/jquery.validate.min.js"/>
         <script type="text/javascript">
             function bindPhoneNum() {
@@ -203,5 +203,12 @@
                     }, "请正确填写您的手机号码");
 
             });
+            
+            //切换验证码图片
+            function change_captcha(){
+                var url = '{:U("Verify/verify")}?t=' + new Date().getTime();
+                $('.checkcode img').get(0).src = url;
+                return false;
+            }
         </script>
         </block>

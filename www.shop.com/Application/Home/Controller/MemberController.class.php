@@ -78,7 +78,6 @@ class MemberController extends \Think\Controller {
                 'status' => 1,
             );
         } else {
-//            session('tel_code',null);
             $return = array(
                 'status' => 0,
             );
@@ -135,6 +134,22 @@ EMIAL;
             $this->error('激活失败,请稍后再试',U('Index/index'));
         }
         $this->success('激活成功',U('Index/index'));
+    }
+    
+    /**
+     * 用户登录
+     */
+    public function login(){
+        if(IS_POST){
+            if(($userinfo = $this->_model->login()) === false){
+                $this->error($this->_model->getError());
+            }
+            //保存用户信息
+            login($userinfo);
+            $this->success('登录成功',U('Index/index'));
+        }else{
+            $this->display();
+        }
     }
 
 }

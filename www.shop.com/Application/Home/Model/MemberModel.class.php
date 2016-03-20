@@ -72,4 +72,34 @@ class MemberModel extends \Think\Model{
         );
         return $this->where($cond)->setField('status',1);
     }
+    
+    /**
+     * 用户登录
+     */
+    public function login(){
+        $username = I('post.username');
+        $password = I('post.password');
+        $captcha = I('post.checkcode');
+        $verify = new \Think\Verify;
+        if($verify->check($captcha) === false){
+            $this->error = '验证码不正确';
+            return false;
+        }
+        $cond = array(
+            'username'=>$username,
+            'status'=>1,
+        );
+        $userinfo = $this->where($cond)->find();
+        if(empty($userinfo)){
+            $this->error = '用户不存在';
+            return false;
+        }
+        
+        $password = my_mcrypt($password, $userinfo['salt']);
+        if($password !== $userinfo['password']){
+            $this->error = '密码错误';
+            return false;
+        }
+        return $userinfo;
+    }
 }

@@ -82,3 +82,19 @@ function getRedis(){
     $redis->connect('127.0.0.1',6379);
     return $redis;
 }
+
+
+/**
+ * 保存和获取用户的信息(session)
+ */
+function login($data = null){
+    if($data){
+        session('userinfo',$data);
+    }else{
+        $userinfo = session('userinfo');
+        if(!$userinfo){
+            $userinfo = array();
+        }
+        return $userinfo;
+    }
+}
