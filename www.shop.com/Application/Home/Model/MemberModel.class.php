@@ -100,6 +100,54 @@ class MemberModel extends \Think\Model{
             $this->error = '密码错误';
             return false;
         }
+        //记录最后登录时间和ip
+        $data = array(
+            'last_login_time'=>NOW_TIME,
+            'last_login_ip'=>  get_client_ip(1),
+            'id'=>$userinfo['id'],
+        );
+        $this->save($data);
         return $userinfo;
+    }
+    
+    /**
+     * 自动登录
+     * 无需将cookie放入数据库，因为只要是cookie中有信息，会自动登录，购物车数据会自动添加到数据库中
+     * @return boolean
+     */
+    public function autoLogin(){
+        //检查是否有session,如果有,就不用自动登陆了
+        $userinfo = login();
+        if ($userinfo) {
+            return true;
+        }
+        $token = token();
+        if (!$token) {
+            return false;
+        }
+
+        //判断token是否合法
+        $token = token();
+        if (!M('MemberToken')->where($token)->count()) {
+            return false;
+        }
+        //获取用户信息,保存到session中
+        $userinfo = M('Member')->find($token['member_id']);
+        login($userinfo); //保存到session中
+        
+        $this->setPermissionsToSession();
+        
+
+        //更新token
+        $data = array(
+            'member_id' => $userinfo['id'],
+            'token'    => createToken(),
+        );
+        token($data);
+        //记录token到数据表
+        $cond = array(
+            'member_id' => $userinfo['id'],
+        );
+        M('MemberToken')->where($cond)->save($data);
     }
 }

@@ -146,6 +146,18 @@ EMIAL;
             }
             //保存用户信息
             login($userinfo);
+            //是否勾选了自动登录
+            M('MemberToken')->where(array('member_id'=>$userinfo['id']))->delete();
+            if(I('post.remember')){
+                $token = array(
+                    'member_id'=>$userinfo['id'],
+                    'token'=>  createToken(),
+                );
+                token($token);
+                M('MemberToken')->add($token);
+            }else{
+                token(array());
+            }
             $this->success('登录成功',U('Index/index'));
         }else{
             $this->display();

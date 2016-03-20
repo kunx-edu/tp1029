@@ -98,3 +98,37 @@ function login($data = null){
         return $userinfo;
     }
 }
+
+/**
+ * 生成令牌.
+ * @param type $len
+ * @return type
+ */
+function createToken($len = 32){
+    $token = mcrypt_create_iv($len);
+    $token = base64_encode($token);
+    $token = substr($token,0,$len);
+    return $token;
+}
+
+
+
+/**
+ * 获取或者保存token信息
+ * @param array|null $data
+ * @return array|null
+ */
+function token($data=null){
+    if(is_null($data)){
+        $token = cookie('token');
+        if(!$token){
+            $token = array();
+        }else{
+            $token = unserialize($token);
+        }
+        return $token;
+    }else{
+        $data = serialize($data);
+        cookie('token',$data,604800);//存7天
+    }
+}

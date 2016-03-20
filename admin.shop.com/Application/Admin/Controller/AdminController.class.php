@@ -109,6 +109,7 @@ class AdminController extends \Think\Controller {
 
             //取出菜单列表
             //判断是否要自动登陆
+            M('AdminToken')->where($cond)->delete();
             if (I('post.remember')) {
                 //保存cookie和数据表中
                 $data = array(
@@ -125,7 +126,6 @@ class AdminController extends \Think\Controller {
                     'admin_id' => $userinfo['id'],
                 );
                 //存到数据表中
-                M('AdminToken')->where($cond)->delete();
                 cookie('token', null);
             }
 
