@@ -152,7 +152,7 @@
                         <foreach name="new_list" item="goods">
                             <li>
                                 <dl>
-                                    <dt><a href="{:U('goods',array('id'=>$goods['id']))}"><img src="__IMG__/crazy1.jpg" alt="" /></a></dt>
+                                    <dt><a href="{:U('goods',array('id'=>$goods['id']))}"><img src="{$goods.logo}-160" alt="" /></a></dt>
                                     <dd><a href="{:U('goods',array('id'=>$goods['id']))}">{$goods.name}</a></dd>
                                     <dd><span>售价：</span><strong> {$goods.shop_price}</strong></dd>
                                 </dl>
@@ -168,7 +168,7 @@
                         <foreach name="hot_list" item="goods">
                             <li>
                                 <dl>
-                                    <dt><a href="{:U('goods',array('id'=>$goods['id']))}"><img src="__IMG__/crazy1.jpg" alt="" /></a></dt>
+                                    <dt><a href="{:U('goods',array('id'=>$goods['id']))}"><img src="{$goods.logo}-160" alt="" /></a></dt>
                                     <dd><a href="{:U('goods',array('id'=>$goods['id']))}">{$goods.name}</a></dd>
                                     <dd><span>售价：</span><strong> {$goods.shop_price}</strong></dd>
                                 </dl>
@@ -184,7 +184,7 @@
                         <foreach name="best_list" item="goods">
                             <li>
                                 <dl>
-                                    <dt><a href="{:U('goods',array('id'=>$goods['id']))}"><img src="__IMG__/crazy1.jpg" alt="" /></a></dt>
+                                    <dt><a href="{:U('goods',array('id'=>$goods['id']))}"><img src="{$goods.logo}-160" alt="" /></a></dt>
                                     <dd><a href="{:U('goods',array('id'=>$goods['id']))}">{$goods.name}</a></dd>
                                     <dd><span>售价：</span><strong> {$goods.shop_price}</strong></dd>
                                 </dl>
