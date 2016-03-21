@@ -57,6 +57,23 @@ class IndexController extends Controller {
     
     
     public function refreshGoodsClick($goods_id){
+        
+        //将数据存放在redis中
+        $redis = getRedis();
+        //goods_clicks
+        $key = 'goods_clicks';
+        $memeber = $goods_id;
+//        var_dump($memeber);
+//        exit;
+        //获取点击数
+        $click = $redis->zScore($key,$memeber);
+        //增加点击数
+        $click = $redis->zIncrBy($key,1,$memeber);
+        $this->ajaxReturn($click);
+        
+        exit;
+        
+        
         $model = M('GoodsClick');
         //增加商品点击数
         //先获取这个商品的点击数
@@ -75,5 +92,79 @@ class IndexController extends Controller {
         $this->ajaxReturn($click);
         //设置商品的点击数
         //返回上皮你的点击数
+    }
+    
+    /**
+     * 将redis中的点击数存储到数据库中
+     */
+    public function syncGoodsClicks(){
+        $redis = getRedis();
+        $key = 'goods_clicks';
+        $clicks = $redis->zRange($key,0,-1,true);
+        //删除数据表中的数据，然后添加
+        $goods_ids = array_keys($clicks);
+        $model = M('GoodsClick');
+        $model->where(array('goods_id'=>array('in',$goods_ids)))->delete();
+        $data = array();
+        foreach($clicks as $key=>$value){
+            $data[] = array(
+                'goods_id'=>$key,
+                'click_times'=>$value,
+            );
+        }
+        $model->addAll($data);
+        echo '<script type="text/javascript">window.close();</script>';
+        exit;
+    }
+    
+    /**
+     * 添加到购物车
+     * 如果没有登录，就保存到cookie中
+     * 如果登录了，就保存到数据库中
+     * @param type $goods_id
+     * @param type $amount
+     */
+    public function addCar($goods_id,$amount){
+        $userinfo = login();
+        if($userinfo){
+            
+        }else{
+            /**
+             * [
+             *  'goods_id'=>amount
+             * ]
+             */
+            $car_list = shoppingcar();
+            if(isset($car_list[$goods_id])){
+                $car_list[$goods_id] += $amount;
+            }else{
+                $car_list[$goods_id] = $amount;
+            }
+            shoppingcar($car_list);
+        }
+        $this->success('添加购物车成功',U('flow1'),1);
+        
+    }
+    
+    /**
+     * 购物车列表
+     */
+    public function flow1(){
+        //获取到购物车列表商品id和购买数量
+        $userinfo = login();
+        $car_list = shoppingcar();
+        $goods_ids = array_keys($car_list);
+        if(empty($goods_ids)){
+            $goods_list = array();
+        } else{
+            //获取商品的基本信息
+            $model = D('Goods');
+            $goods_list = $model->getShoppingCarInfo($goods_ids);
+            //展示
+            foreach($goods_list as $key=>$value){
+                $goods_list[$key]['amount'] = $value;
+            }
+        }
+        $this->assign('goods_list',$goods_list);
     }
 }

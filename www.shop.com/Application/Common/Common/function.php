@@ -76,7 +76,10 @@ function sendMail($address, $content, $subject) {
     return $mail->send();
 }
 
-
+/**
+ * 获取redis连接
+ * @return \Redis
+ */
 function getRedis(){
     $redis = new \Redis;
     $redis->connect('127.0.0.1',6379);
@@ -130,5 +133,22 @@ function token($data=null){
     }else{
         $data = serialize($data);
         cookie('token',$data,604800);//存7天
+    }
+}
+
+/**
+ * 获取或者保存token信息
+ * @param array|null $data
+ * @return array|null
+ */
+function shoppingcar($data=null){
+    if(is_null($data)){
+        $car_list = cookie('SHOPPING_CAR');
+        if(!$car_list){
+            $car_list = array();
+        }
+        return $car_list;
+    }else{
+        cookie('SHOPPING_CAR',$data,604800);//存7天
     }
 }

@@ -40,4 +40,18 @@ class GoodsModel extends \Think\Model{
         $row['logo'] = $row['gallery'][0];
         return $row;
     }
+    
+    /**
+     * 获取购物车中商品的基本信息
+     * id name logo shop_price
+     */
+    public function getShoppingCarInfo(array $goods_ids){
+        $cond = array(
+            'id'=>array('in',$goods_ids),
+            'status'=>1,
+            'is_on_sale'=>1,
+        );
+        return $this->field('id,name,logo,shop_price')->where($cond)->select();
+        echo $this->getLastSql();
+    }
 }
