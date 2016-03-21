@@ -214,5 +214,18 @@ class IndexController extends Controller {
         }
         return array('goods_list'=>$goods_list,'total_price'=>$total_price);
     }
+    
+    /**
+     * 填写订单信息
+     */
+    public function flow2(){
+        //判断是否登录，没有登录就跳转到登录页面，并且登陆后跳转回来
+        $userinfo = login();
+        if(empty($userinfo)){
+            cookie('FORWARD',__SELF__);
+            $this->error('亲，请先登录哟',U('Member/login'));
+        }
+        $this->display();
+    }
 
 }

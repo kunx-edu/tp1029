@@ -166,7 +166,12 @@ EMIAL;
              * 遍历调用数据表中的数据
              */
             D('ShoppingCar')->cookie2db();
-            $this->success('登录成功',U('Index/index'));
+            $url = cookie('FORWARD');
+            cookie('FORWARD',null);
+            if(!$url){
+                $url = U('Index/index');
+            }
+            $this->success('登录成功',$url);
         }else{
             $this->display();
         }
