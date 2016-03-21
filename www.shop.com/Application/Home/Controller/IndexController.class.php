@@ -24,6 +24,8 @@ class IndexController extends Controller {
             S('article_list',$article_list);
         }
         $this->assign('article_list', $article_list);
+        
+        $this->assign('userinfo',login());
     }
     /**
      * 站点首页
@@ -31,7 +33,7 @@ class IndexController extends Controller {
     public function index(){
         //取出商品列表：热卖 新品 精品
         $model = D('Goods');
-        
+        //打印session和cookie
         $data = array(
             'new_list'=>$model->getGoodsByStatus(1),
             'hot_list'=>$model->getGoodsByStatus(2),
@@ -39,6 +41,7 @@ class IndexController extends Controller {
             
         );
         $this->assign($data);
+        
         $this->display();
     }
     
@@ -50,5 +53,27 @@ class IndexController extends Controller {
         $row = $model->getGoodsInfo($id);
         $this->assign('row',$row);
         $this->display();
+    }
+    
+    
+    public function refreshGoodsClick($goods_id){
+        $model = M('GoodsClick');
+        //增加商品点击数
+        //先获取这个商品的点击数
+        $click = $model->getFieldByGoodsId($goods_id,'click_times');
+        if($click){
+            ++$click;
+            $model->where('goods_id='.$goods_id)->setInc('click_times',1);
+        }else{
+            $click=1;
+            $data = array(
+                'goods_id'=>$goods_id,
+                'click_times'=>1,
+            );
+            $model->add($data);
+        }
+        $this->ajaxReturn($click);
+        //设置商品的点击数
+        //返回上皮你的点击数
     }
 }

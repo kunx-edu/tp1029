@@ -15,6 +15,7 @@ class MemberController extends \Think\Controller {
         $meta_title   = isset($meta_titles[ACTION_NAME]) ? $meta_titles[ACTION_NAME] : '用户管理';
         $this->assign('meta_title', $meta_title);
         $this->_model = D('Member'); //由于所有的操作都需要用到模型,我们在初始化方法中创建
+        $this->assign('userinfo',login());
     }
 
     /**
@@ -162,6 +163,27 @@ EMIAL;
         }else{
             $this->display();
         }
+    }
+    
+    /**
+     * 退出
+     */
+    public function logout(){
+        login(array());
+        token(array());
+        $this->success('退出成功',U('Index/index'));
+    }
+    
+    /**
+     * 获取用户信息
+     */
+    public function userInfo(){
+        $userinfo = login();
+        $return = array(
+            'username'=>$userinfo['username'],
+            'member_id'=>$userinfo['id'],
+        );
+        $this->ajaxReturn($return);
     }
 
 }

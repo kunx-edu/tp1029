@@ -21,7 +21,9 @@
                 </div>
                 <div class="topnav_right fr">
                     <ul>
-                        <li>您好，欢迎来到京西！[<a href="{:U('Home/Member/login')}">登录</a>] [<a href="{:U('Member/register')}">免费注册</a>] </li>
+                        <li id="user_info">
+                        
+                        </li>
                         <li class="line">|</li>
                         <li>我的订单</li>
                         <li class="line">|</li>
@@ -232,9 +234,25 @@
                 <a href=""><img src="__IMG__/beian.gif" alt="" /></a>
             </p>
         </div>
+        
         <!-- 底部版权 end -->
         <js href="__JS__/jquery.min.js"/>
         <js href="__JS__/header.js"/>
+        <script type="text/javascript">
+            $(function(){
+                var url = '{:U("Member/userInfo")}';
+                $.getJSON(url,function(response){
+                    if(response.member_id){
+                        var html='您好，欢迎来到京西！[<a href="{:U('')}">'+response.username+'</a>] [<a href="{:U('Member/logout')}">退出</a>]';
+                    } else{
+                        var html='您好，欢迎来到京西！[<a href="{:U('Home/Member/login')}">登录</a>] [<a href="{:U('Member/register')}">免费注册</a>]';
+
+                    }
+                    $('#user_info').html(html);
+                    console.debug(response);
+                });
+            });
+        </script>
         <block name="js"></block>
     </body>
 </html>

@@ -88,7 +88,7 @@ function getRedis(){
  * 保存和获取用户的信息(session)
  */
 function login($data = null){
-    if($data){
+    if(!is_null($data)){
         session('userinfo',$data);
     }else{
         $userinfo = session('userinfo');

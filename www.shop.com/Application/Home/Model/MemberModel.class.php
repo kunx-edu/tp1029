@@ -122,6 +122,7 @@ class MemberModel extends \Think\Model{
             return true;
         }
         $token = token();
+        
         if (!$token) {
             return false;
         }
@@ -129,12 +130,12 @@ class MemberModel extends \Think\Model{
 
         //判断token是否合法
         if (!M('MemberToken')->where($token)->count()) {
+//            echo M('MemberToken')->getLastSql();
             return false;
         }
         //获取用户信息,保存到session中
         $userinfo = M('Member')->find($token['member_id']);
         login($userinfo); //保存到session中
-        
 
         //更新token
         $data = array(
