@@ -152,3 +152,11 @@ function shoppingcar($data=null){
         cookie('SHOPPING_CAR',$data,604800);//存7天
     }
 }
+
+/**
+ * 使用财务表示形式
+ * @param type $number
+ */
+function my_num_format($number){
+    return number_format($number,2,'.','');
+}

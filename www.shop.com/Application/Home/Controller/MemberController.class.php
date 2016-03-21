@@ -159,6 +159,13 @@ EMIAL;
             }else{
                 token(array());
             }
+            
+            //将cookie中的购物车放入到数据库中
+            /**
+             * 从cookie中取出所有的商品
+             * 遍历调用数据表中的数据
+             */
+            D('ShoppingCar')->cookie2db();
             $this->success('登录成功',U('Index/index'));
         }else{
             $this->display();
