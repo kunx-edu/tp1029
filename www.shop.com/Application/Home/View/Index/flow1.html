@@ -4,7 +4,18 @@
 </block>
 <block name='js'>
     <js href='__JS__/cart1.js'/>
-
+    <script type="text/javascript">
+        function change_amount(goods_id, amount) {
+            var url = '{:U("changeAmount")}';
+            var data = {
+                goods_id:goods_id,
+                amount:amount,
+            };
+            $.getJSON(url,data,function(){
+                
+            });
+        }
+    </script>
 </block>
 <block name='main'>
     <!-- 主体部分 start -->
@@ -21,19 +32,19 @@
                 </tr>
             </thead>
             <tbody>
-                <foreach name='goods_list' item='goods'>
-                    <tr>
-                        <td class="col1"><a href=""><img src="{$goods.logo}-80" alt="" /></a>  <strong><a href="">{$goods.name}</a></strong></td>
-                        <td class="col3">￥<span>{$goods.shop_price}</span></td>
-                        <td class="col4"> 
-                            <a href="javascript:;" class="reduce_num"></a>
-                            <input type="text" name="amount" value="{$goods.amount}" class="amount"/>
-                            <a href="javascript:;" class="add_num"></a>
-                        </td>
-                        <td class="col5">￥<span>{$goods.sub_total}</span></td>
-                        <td class="col6"><a href="">删除</a></td>
-                    </tr>
-                </foreach>
+            <foreach name='goods_list' item='goods'>
+                <tr>
+                    <td class="col1"><a href=""><img src="{$goods.logo}-80" alt="" /></a>  <strong><a href="">{$goods.name}</a></strong></td>
+                    <td class="col3">￥<span>{$goods.shop_price}</span></td>
+                    <td class="col4">
+                        <a href="javascript:;" class="reduce_num"></a>
+                        <input type="text" name="amount" goods_id="{$goods.id}" value="{$goods.amount}" class="amount"/>
+                        <a href="javascript:;" class="add_num"></a>
+                    </td>
+                    <td class="col5">￥<span>{$goods.sub_total}</span></td>
+                    <td class="col6"><a href="javascript:;" class="remove_goods">删除</a></td>
+                </tr>
+            </foreach>
             </tbody>
             <tfoot>
                 <tr>
