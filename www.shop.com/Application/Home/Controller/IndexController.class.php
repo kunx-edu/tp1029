@@ -33,6 +33,11 @@ class IndexController extends Controller {
 
         $this->assign('userinfo', login());
         $this->_model = D('Goods');
+        if(ACTION_NAME == 'index'){
+            $this->assign('show_cat_list',true);
+        }else{
+            $this->assign('show_cat_list',false);
+        }
     }
 
     /**
