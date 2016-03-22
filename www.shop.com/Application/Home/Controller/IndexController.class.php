@@ -231,6 +231,20 @@ class IndexController extends Controller {
             cookie('FORWARD',__SELF__);
             $this->error('亲，请先登录哟',U('Member/login'));
         }
+        //取出当前用户的所有地址
+        $this->assign('addresses',D('Address')->getList());
+        //获取所有的送货方式
+        $this->assign('deliveries',M('Delivery')->where('status=1')->order('sort')->select());
+        //获取所有的付款方式
+        $this->assign('payments',M('Payment')->where('status=1')->order('sort')->select());
+        //获取购物车数据
+        $model    = M('ShoppingCar');
+        $cond     = array(
+            'member_id' => $userinfo['id'],
+        );
+        $car_list = $model->where($cond)->getField('goods_id,amount');
+        $this->assign($this->getShoppingCarInfo($car_list));
+        
         $this->display();
     }
     

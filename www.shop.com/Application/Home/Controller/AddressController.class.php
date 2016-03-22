@@ -92,6 +92,10 @@ class AddressController extends \Think\Controller{
         }
     }
     
+    /**
+     * 编辑地址。
+     * @param type $id
+     */
     public function edit($id){
         $model = D('Address');
         $userinfo = login();
