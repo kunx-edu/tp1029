@@ -180,17 +180,7 @@ class IndexController extends Controller {
      */
     public function flow1() {
         //获取到购物车列表商品id和购买数量
-        $userinfo = login();
-        if ($userinfo) {
-            $model    = M('ShoppingCar');
-            $cond     = array(
-                'member_id' => $userinfo['id'],
-            );
-            $car_list = $model->where($cond)->getField('goods_id,amount');
-        } else {
-            $car_list    = shoppingcar();
-        }
-        $this->assign($this->getShoppingCarInfo($car_list));
+        $this->assign(D('ShoppingCar')->getShoppingCarInfo());
         $this->display();
     }
 
@@ -199,27 +189,27 @@ class IndexController extends Controller {
      * @param type $goods_ids
      * @return type
      */
-    private function getShoppingCarInfo($car_list) {
-        $goods_ids   = array_keys($car_list);
-        $total_price = 0;
-        if (empty($goods_ids)) {
-            $goods_list = array();
-        } else {
-            //获取商品的基本信息
-            $model      = D('Goods');
-            $goods_list = $model->getShoppingCarInfo($goods_ids);
-            //展示
-            foreach ($goods_list as $key => $value) {
-                $value['shop_price'] = my_num_format($value['shop_price']);
-                $value['amount']     = $car_list[$value['id']];
-                $value['sub_total']  = my_num_format($car_list[$value['id']] * $value['shop_price']);
-                $total_price         = $total_price + $value['sub_total'];
-                $goods_list[$key]    = $value;
-            }
-        }
-        $total_price = my_num_format($total_price);
-        return array('goods_list'=>$goods_list,'total_price'=>$total_price);
-    }
+//    private function getShoppingCarInfo($car_list) {
+//        $goods_ids   = array_keys($car_list);
+//        $total_price = 0;
+//        if (empty($goods_ids)) {
+//            $goods_list = array();
+//        } else {
+//            //获取商品的基本信息
+//            $model      = D('Goods');
+//            $goods_list = $model->getShoppingCarInfo($goods_ids);
+//            //展示
+//            foreach ($goods_list as $key => $value) {
+//                $value['shop_price'] = my_num_format($value['shop_price']);
+//                $value['amount']     = $car_list[$value['id']];
+//                $value['sub_total']  = my_num_format($car_list[$value['id']] * $value['shop_price']);
+//                $total_price         = $total_price + $value['sub_total'];
+//                $goods_list[$key]    = $value;
+//            }
+//        }
+//        $total_price = my_num_format($total_price);
+//        return array('goods_list'=>$goods_list,'total_price'=>$total_price);
+//    }
     
     /**
      * 填写订单信息
@@ -238,12 +228,11 @@ class IndexController extends Controller {
         //获取所有的付款方式
         $this->assign('payments',M('Payment')->where('status=1')->order('sort')->select());
         //获取购物车数据
-        $model    = M('ShoppingCar');
-        $cond     = array(
-            'member_id' => $userinfo['id'],
-        );
-        $car_list = $model->where($cond)->getField('goods_id,amount');
-        $this->assign($this->getShoppingCarInfo($car_list));
+//        $model    = M('ShoppingCar');
+//        $cond     = array(
+//            'member_id' => $userinfo['id'],
+//        );
+        $this->assign(D('ShoppingCar')->getShoppingCarInfo());
         
         $this->display();
     }
@@ -258,4 +247,8 @@ class IndexController extends Controller {
         $model->changeAmount($goods_id,$amount);
     }
 
+    
+    public function flow3(){
+        $this->display();
+    }
 }

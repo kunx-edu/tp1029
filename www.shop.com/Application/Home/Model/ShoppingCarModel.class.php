@@ -77,5 +77,52 @@ class ShoppingCarModel extends \Think\Model {
             shoppingcar($cookie_car);
         }
     }
+    
+    /**
+     * 获取购物车信息
+     * @return type
+     */
+    public function getShoppingCarInfo() {
+        $userinfo = login();
+        if ($userinfo) {
+            $model    = M('ShoppingCar');
+            $cond     = array(
+                'member_id' => $userinfo['id'],
+            );
+            $car_list = $model->where($cond)->getField('goods_id,amount');
+        } else {
+            $car_list    = shoppingcar();
+        }
+        
+        $goods_ids   = array_keys($car_list);
+        $total_price = 0;
+        if (empty($goods_ids)) {
+            $goods_list = array();
+        } else {
+            //获取商品的基本信息
+            $model      = D('Goods');
+            $goods_list = $model->getShoppingCarInfo($goods_ids);
+            //展示
+            foreach ($goods_list as $key => $value) {
+                $value['shop_price'] = my_num_format($value['shop_price']);
+                $value['amount']     = $car_list[$value['id']];
+                $value['sub_total']  = my_num_format($car_list[$value['id']] * $value['shop_price']);
+                $total_price         = $total_price + $value['sub_total'];
+                $goods_list[$key]    = $value;
+            }
+        }
+        $total_price = my_num_format($total_price);
+        return array('goods_list'=>$goods_list,'total_price'=>$total_price);
+    }
 
+    /**
+     * 清空购物车
+     */
+    public function cleanShoppingCar(){
+        $userinfo = login();
+        $cond = array(
+            'member_id'=>$userinfo['id'],
+        );
+        $this->where($cond)->delete();
+    }
 }

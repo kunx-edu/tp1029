@@ -25,7 +25,7 @@
                         
                         </li>
                         <li class="line">|</li>
-                        <li>我的订单</li>
+                        <li><a href="{:U('Index/orderList')}">我的订单</a></li>
                         <li class="line">|</li>
                         <li>客户服务</li>
 
@@ -73,13 +73,13 @@
                             <b></b>
                         </dt>
                         <dd>
-                            <div class="prompt">
+                            <div class="prompt login_tip">
                                 您好，请<a href="">登录</a>
                             </div>
                             <div class="uclist mt10">
                                 <ul class="list1 fl">
-                                    <li><a href="">用户信息></a></li>
-                                    <li><a href="">我的订单></a></li>
+                                    <li><a href="{:U('Member/info')}">用户信息></a></li>
+                                    <li><a href="{:U('Index/orderList')}">我的订单></a></li>
                                     <li><a href="{:U('Address/index')}">收货地址></a></li>
                                     <li><a href="">我的收藏></a></li>
                                 </ul>
@@ -244,11 +244,14 @@
                 $.getJSON(url,function(response){
                     if(response.member_id){
                         var html='您好，欢迎来到京西！[<a href="{:U('')}">'+response.username+'</a>] [<a href="{:U('Member/logout')}">退出</a>]';
+                        var login_tip_html = '您好，' +　response.username;
                     } else{
                         var html='您好，欢迎来到京西！[<a href="{:U('Home/Member/login')}">登录</a>] [<a href="{:U('Member/register')}">免费注册</a>]';
+                        var login_tip_html = '您好，请<a href="{:U('Home/Member/login')}">登录</a>';
 
                     }
                     $('#user_info').html(html);
+                    $('.login_tip').html(login_tip_html);
                     console.debug(response);
                 });
             });

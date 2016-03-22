@@ -6,21 +6,16 @@
     <js href='__JS__/cart2.js'/>
     <script type='text/javascript'>
         $(function () {
-            $(':input[name=delivery]').click(function(){
+            $(':input[name=delivery_id]').click(function(){
                 calc_money();
-//                var delivery_price = $(this).attr('price') - 0;
-//                //找到运费节点，设置为价格
-//                $('#delivery_price').text('￥'+delivery_price.toFixed(2));
-//                //找到总价，计算并设置总价
-//                var total_price = {$total_price};
-//                $('#total_price').text('￥' + (total_price+delivery_price).toFixed(2));
             });
         });
         calc_money();
         
+        //计算总价格
         function calc_money(){
             //获取运费
-            var delivery_price = $(':input[name=delivery]:checked').attr('price')-0;
+            var delivery_price = $(':input[name=delivery_id]:checked').attr('price')-0;
             var total_price = {$total_price}-0;
             $('#delivery_price').text('￥'+delivery_price.toFixed(2));
             $('.total_price').text('￥' + (total_price+delivery_price).toFixed(2));
@@ -33,7 +28,7 @@
 
 <block name='main'>
     <!-- 主体部分 start -->
-    <form action="{:U()}" method="post" name="frm">
+    <form action="{:U('Order/add')}" method="post" name="frm">
         <div class="fillin w990 bc mt15">
             <div class="fillin_hd">
                 <h2>填写并核对订单信息</h2>
@@ -71,7 +66,7 @@
                             <foreach name="deliveries" item="delivery">
                                 <tr>	
                                     <td>
-                                        <input type="radio" name="delivery" <eq name='delivery.is_default' value='1'>checked="checked"</eq> price="{$delivery.price}" value='{$delivery.id}'/>{$delivery.name}
+                                        <input type="radio" name="delivery_id" <eq name='delivery.is_default' value='1'>checked="checked"</eq> price="{$delivery.price}" value='{$delivery.id}'/>{$delivery.name}
                                     </td>
                                     <td>￥{$delivery.price}</td>
                                     <td>{$delivery.intro}</td>
@@ -90,7 +85,7 @@
                         <table> 
                             <foreach name='payments' item='payment'>
                                 <tr>
-                                    <td class="col1"><input type="radio" name="pay" <eq name='payment.is_default' value='1'>checked="checked"</eq> value='{$payment.id}'/>{$payment.name}</td>
+                                    <td class="col1"><input type="radio" name="pay_type" <eq name='payment.is_default' value='1'>checked="checked"</eq> value='{$payment.id}'/>{$payment.name}</td>
                                     <td class="col2">{$payment.intro}</td>
                                 </tr>
                             </foreach>
@@ -113,10 +108,10 @@
                             </li>
                             <li>
                                 <label for="">发票内容：</label>
-                                <input type="radio" name="content" checked="checked" vaule="1"/>明细
-                                <input type="radio" name="content"  vaule="2"/>办公用品
-                                <input type="radio" name="content"  vaule="3"/>体育休闲
-                                <input type="radio" name="content"  vaule="4"/>耗材
+                                <input type="radio" name="content" checked="checked" value="1"/>明细
+                                <input type="radio" name="content"  value="2"/>办公用品
+                                <input type="radio" name="content"  value="3"/>体育休闲
+                                <input type="radio" name="content"  value="4"/>耗材
                             </li>
                         </ul>						
                     </div>
