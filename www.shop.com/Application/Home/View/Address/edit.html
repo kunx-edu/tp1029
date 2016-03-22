@@ -58,6 +58,57 @@
             $('.area_id').change(function(){
                 $('#area_name').val($(this).find(':selected').text());
             });
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //===================性感的分割线=====================
+            //回显数据
+            $(':input[name=is_default]').val([{$row.is_default}]);
+            //ajax请求获取市级列表
+            var url = '{:U("Address/getLoctionsByParentId")}';
+            var data = {
+                parent_id: '{$row.province_id}',
+            };
+            $.getJSON(url, data, function (city_list) {
+                //展示市级菜单
+                var html = '';
+                //保留“请选择”，清空其它的市级菜单
+                $('.city_id').get(0).length = 1;
+                //为了避免切换省份的时候区县仍有数据，我们清空
+                $('.area_id').get(0).length = 1;
+                $(city_list).each(function (i, n) {
+                    html += '<option value="' + n.id + '">' + n.name + '</option>';
+                });
+                $(html).appendTo($('.city_id'));
+                $('.city_id').val('{$row.city_id}');
+                
+                
+                //===============回显区县===================
+                //ajax请求获取市级列表
+                var data = {
+                    parent_id: '{$row.city_id}',
+                };
+                $.getJSON(url, data, function (area_list) {
+                    //展示市级菜单
+                    var html = '';
+                    //保留“请选择”，清空其它的市级菜单
+                    $('.area_id').get(0).length = 1;
+                    $(area_list).each(function (i, n) {
+                        html += '<option value="' + n.id + '">' + n.name + '</option>';
+                    });
+                    $(html).appendTo($('.area_id'));
+                    $('.area_id').val('{$row.area_id}');
+                });
+                //获取区县菜单结束
+            });
+            //获取市级菜单结束
         });
     </script>
 </block>
@@ -107,7 +158,7 @@
                     <dl>
                         <dt>{$key+1}.{$row.name} {$row.province_name} {$row.city_name} {$row.area_name} {$row.detail_address} {$row.tel} </dt>
                         <dd>
-                            <a href="{:U('edit',array('id'=>$row['id']))}">修改</a>
+                            <a href="">修改</a>
                             <a href="{:U('delete',array('id'=>$row['id']))}">删除</a>
                             <a href="">设为默认地址</a>
                         </dd>
@@ -116,33 +167,33 @@
             </div>
 
             <div class="address_bd mt10">
-                <h4>新增收货地址</h4>
-                <form action="{:U('add')}" name="address_form" method="post">
+                <h4>编辑收货地址</h4>
+                <form action="{:U('')}" name="address_form" method="post">
                     <ul>
                         <li>
                             <label for=""><span>*</span>收 货 人：</label>
-                            <input type="text" name="name" class="txt" />
+                            <input type="text" name="name" class="txt" value='{$row.name}'/>
                         </li>
                         <li>
                             <label for=""><span>*</span>所在地区：</label>
-                            <input type="hidden" id="province_name" name="province_name"/>
-                            {:arr2select($provinces,'id','name','province_id')}
-                            <input type="hidden" id="city_name" name="city_name"/>
+                            <input type="hidden" id="province_name" name="province_name" value='{$row.province_name}'/>
+                            {:arr2select($provinces,'id','name','province_id',$row['province_id'])}
+                            <input type="hidden" id="city_name" name="city_name" value='{$row.city_name}'/>
                             <select name="city_id" class='city_id'>
                                 <option value="">请选择</option>
                             </select>
-                            <input type="hidden" id="area_name" name="area_name"/>
+                            <input type="hidden" id="area_name" name="area_name" value='{$row.area_name}'/>
                             <select name="area_id" class='area_id'>
                                 <option value="">请选择</option>
                             </select>
                         </li>
                         <li>
                             <label for=""><span>*</span>详细地址：</label>
-                            <input type="text" name="detail_address" class="txt address"  />
+                            <input type="text" name="detail_address" class="txt address"  value='{$row.detail_address}' />
                         </li>
                         <li>
                             <label for=""><span>*</span>手机号码：</label>
-                            <input type="text" name="tel" class="txt" />
+                            <input type="text" name="tel" class="txt"  value='{$row.tel}'/>
                         </li>
                         <li>
                             <label for="">&nbsp;</label>
@@ -150,6 +201,7 @@
                         </li>
                         <li>
                             <label for="">&nbsp;</label>
+                            <input type='hidden' name='id' value='{$row.id}'/>
                             <input type="submit" name="" class="btn" value="保存" />
                         </li>
                     </ul>

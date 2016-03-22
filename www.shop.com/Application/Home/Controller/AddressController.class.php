@@ -74,4 +74,44 @@ class AddressController extends \Think\Controller{
             $this->error('请求非法');
         }
     }
+    /**
+     * 删除地址
+     * @param type $id
+     */
+    public function delete($id){
+        $model = M('Address');
+        $userinfo = login();
+        $cond = array(
+            'member_id'=>$userinfo['id'],
+            'id'=>$id,
+        );
+        if($model->where($cond)->delete() === false){
+            $this->error($model->getError());
+        }else{
+            $this->success('删除成功');
+        }
+    }
+    
+    public function edit($id){
+        $model = D('Address');
+        $userinfo = login();
+        $cond = array(
+            'member_id'=>$userinfo['id'],
+            'id'=>$id,
+        );
+        if(IS_POST){
+            if($model->create() ===false){
+                $this->error($model->getError());
+            }
+            if($model->updateAddress() ===false){
+                $this->error($model->getError());
+            }
+            $this->success('修改成功',U('index'));
+        }else{
+            $row = $model->where($cond)->find();
+            $this->assign('row',$row);
+            $this->assign('provinces', $this->_model->getTopLocations());
+            $this->display();
+        }
+    }
 }
