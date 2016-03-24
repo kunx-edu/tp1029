@@ -115,9 +115,10 @@ class ShoppingCarModel extends \Think\Model {
                 'status'=>1,
             );
             $member_level = M('MemberLevel')->where($cond)->field('id,discount')->find();
-//            $member_level =['id'=>3,'discount'=>80];
-            $price = 0;
-            foreach($goods_list as $key=>$value){
+            
+            //展示
+            foreach ($goods_list as $key => $value) {
+                //获取会员价格
                 $cond = array(
                     'member_level_id'=>$member_level['id'],
                     'goods_id'=>$value['id'],
@@ -129,11 +130,8 @@ class ShoppingCarModel extends \Think\Model {
                 }
                 
                 $goods_list[$key]['shop_price'] = $price;
-            }
-            
-            
-            //展示
-            foreach ($goods_list as $key => $value) {
+                //获取会员价格结束
+                
                 $value['shop_price'] = my_num_format($value['shop_price']);
                 $value['amount']     = $car_list[$value['id']];
                 $value['sub_total']  = my_num_format($car_list[$value['id']] * $value['shop_price']);

@@ -3,6 +3,13 @@
 namespace Home\Model;
 
 class OrderInfoModel extends \Think\Model {
+    private static $statuses = array(
+        0=>'已关闭',
+        1=>'待支付',
+        2=>'待发货',
+        3=>'待确认',
+        4=>'已完成',
+    );
 
     public function addOrder() {
         $this->startTrans();
@@ -157,6 +164,25 @@ class OrderInfoModel extends \Think\Model {
             'member_id'     => $userinfo['id'],
         );
         return M('Invoice')->add($data);
+    }
+    
+    
+    public function getPageResult(){
+        $userinfo = login();
+        $cond = array(
+            'status'=>array('gt',0),
+            'member_id'=>$userinfo['id'],
+        );
+        //获取所有的支付类型
+        $payment_list = M('Payment')->getField('id,name');
+        $rows = $this->where($cond)->order('inputtime desc')->page(I('get.p',1),C('PAGE_SIZE'))->select();
+        foreach($rows as $key=>$value){
+            $value['total_price'] = my_num_format($value['price']+$value['delivery_price']);
+            $value['payment_name'] = $payment_list[$value['pay_type']];
+            $value['status_name'] = self::$statuses[$value['status']];
+            $rows[$key] = $value;
+        }
+        return $rows;
     }
 
 }

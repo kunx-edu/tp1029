@@ -71,11 +71,8 @@ class IndexController extends Controller {
 
         //将数据存放在redis中
         $redis   = getRedis();
-        //goods_clicks
         $key     = 'goods_clicks';
         $memeber = $goods_id;
-//        var_dump($memeber);
-//        exit;
         //获取点击数
         $click   = $redis->zScore($key, $memeber);
         //增加点击数
@@ -159,11 +156,6 @@ class IndexController extends Controller {
                 $model->add($data);
             }
         } else {
-            /**
-             * [
-             *  'goods_id'=>amount
-             * ]
-             */
             $car_list = shoppingcar();
             if (isset($car_list[$goods_id])) {
                 $car_list[$goods_id] += $amount;
@@ -184,32 +176,6 @@ class IndexController extends Controller {
         $this->display();
     }
 
-    /**
-     * 获取购物车需要的商品信息
-     * @param type $goods_ids
-     * @return type
-     */
-//    private function getShoppingCarInfo($car_list) {
-//        $goods_ids   = array_keys($car_list);
-//        $total_price = 0;
-//        if (empty($goods_ids)) {
-//            $goods_list = array();
-//        } else {
-//            //获取商品的基本信息
-//            $model      = D('Goods');
-//            $goods_list = $model->getShoppingCarInfo($goods_ids);
-//            //展示
-//            foreach ($goods_list as $key => $value) {
-//                $value['shop_price'] = my_num_format($value['shop_price']);
-//                $value['amount']     = $car_list[$value['id']];
-//                $value['sub_total']  = my_num_format($car_list[$value['id']] * $value['shop_price']);
-//                $total_price         = $total_price + $value['sub_total'];
-//                $goods_list[$key]    = $value;
-//            }
-//        }
-//        $total_price = my_num_format($total_price);
-//        return array('goods_list'=>$goods_list,'total_price'=>$total_price);
-//    }
     
     /**
      * 填写订单信息
@@ -227,11 +193,6 @@ class IndexController extends Controller {
         $this->assign('deliveries',M('Delivery')->where('status=1')->order('sort')->select());
         //获取所有的付款方式
         $this->assign('payments',M('Payment')->where('status=1')->order('sort')->select());
-        //获取购物车数据
-//        $model    = M('ShoppingCar');
-//        $cond     = array(
-//            'member_id' => $userinfo['id'],
-//        );
         $this->assign(D('ShoppingCar')->getShoppingCarInfo());
         
         $this->display();
@@ -250,5 +211,12 @@ class IndexController extends Controller {
     
     public function flow3(){
         $this->display();
+    }
+    
+    
+    public function orderList(){
+        $model = D('OrderInfo');
+        $this->assign('rows',$model->getPageResult());
+        $this->display('order');
     }
 }

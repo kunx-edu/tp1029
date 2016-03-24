@@ -65,4 +65,5 @@ return array(
     ),
     'URL_MODULE'=>2,
     'TMPL_CACHE_ON'=>false,
+    'PAGE_SIZE'=>20,
 );

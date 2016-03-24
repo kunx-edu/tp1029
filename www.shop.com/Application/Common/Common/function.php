@@ -86,7 +86,6 @@ function getRedis(){
     return $redis;
 }
 
-
 /**
  * 保存和获取用户的信息(session)
  */

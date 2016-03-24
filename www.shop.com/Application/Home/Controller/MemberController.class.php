@@ -15,7 +15,7 @@ class MemberController extends \Think\Controller {
         $meta_title   = isset($meta_titles[ACTION_NAME]) ? $meta_titles[ACTION_NAME] : '用户管理';
         $this->assign('meta_title', $meta_title);
         $this->_model = D('Member'); //由于所有的操作都需要用到模型,我们在初始化方法中创建
-        $this->assign('userinfo',login());
+//        $this->assign('userinfo',login());
     }
 
     /**
