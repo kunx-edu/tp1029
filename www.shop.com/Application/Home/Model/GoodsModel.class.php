@@ -38,6 +38,26 @@ class GoodsModel extends \Think\Model{
         $row['content'] = M('GoodsIntro')->getFieldByGoodsId($goods_id,'content');
         $row['gallery'] = M('GoodsGallery')->where(array('goods_id'=>$goods_id))->getField('path',true);
         $row['logo'] = $row['gallery'][0];
+        $member_prices= M('MemberGoodsPrice')->where(array('goods_id'=>$goods_id))->getField('member_level_id,price');
+        $member_levels= M('MemberLevel')->where('status=1')->getField('id,name,discount');
+        $tmp_prices = array();
+        foreach($member_levels as $member_level){
+            if(isset($member_prices[$member_level['id']])){
+                $tmp_price = my_num_format($member_prices[$member_level['id']]);
+            }else{
+                $tmp_price=  my_num_format($row['shop_price']*$member_level['discount']/100);
+            }
+            $tmp_prices[$member_level['id']] = array(
+                'price'=>$tmp_price,
+                'name'=>$member_level['name'],
+            );
+        }
+        $row['member_prices'] = $tmp_prices;
+        /**
+         * [
+         *  1：[1200,钻石会员]
+         * ]
+         */
         return $row;
     }
     

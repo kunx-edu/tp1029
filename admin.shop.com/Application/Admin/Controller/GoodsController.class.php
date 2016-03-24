@@ -99,6 +99,17 @@ class GoodsController extends \Think\Controller {
             $this->success('修改成功', U('index'));
         } else {
             $this->_before_view();
+            /**
+             * [
+             *  name=>'哈雷摩托',
+             * 'shop_price'=>200,
+             * member_prices=>array(
+             *  1=>199
+             * 2=>198
+             * 3=>190
+             * ),
+             * ]
+             */
             $this->assign('row', $this->_model->getGoodsInfo($id));
             $this->display('add');
         }
@@ -114,6 +125,8 @@ class GoodsController extends \Think\Controller {
         $this->assign('supplier_list', D('Supplier')->getList());
         //3.获取商品分类列表
         $this->assign('goods_category_list', json_encode(D('GoodsCategory')->getList()));
+        //4.会员等级列表
+        $this->assign('member_levels', D('MemberLevel')->getList());
     }
 
     /**

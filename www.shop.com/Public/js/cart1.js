@@ -72,7 +72,8 @@ $(function () {
     //删除
     $(".remove_goods").click(function () {
         //将商品的数量发送给后端
-        var goods_id = $('.amount').attr('goods_id');
+        var amount_node = $(this).parent().parent().find('.amount').get(0);
+        var goods_id = $(amount_node).attr('goods_id');
         var amount = 0;
         change_amount(goods_id,amount);
         $(this).parent().parent().remove();

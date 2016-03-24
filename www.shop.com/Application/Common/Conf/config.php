@@ -64,4 +64,5 @@ return array(
         'Index:goods' => array('goods-{id}', 3600),
     ),
     'URL_MODULE'=>2,
+    'TMPL_CACHE_ON'=>false,
 );

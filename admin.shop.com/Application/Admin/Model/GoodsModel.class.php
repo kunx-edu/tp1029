@@ -93,7 +93,14 @@ class GoodsModel extends \Think\Model {
             $this->rollback();
             return false;
         }
-
+        //保存会员价格
+        if ($this->_addMemberPrice($id) === false) {
+            $this->error = '保存会员价格失败';
+            $this->rollback();
+            return false;
+        }
+        
+        
         //保存货号,如果货号已经提交,就判断是否重复,否则自动生成
         $this->commit();
     }
@@ -148,6 +155,8 @@ class GoodsModel extends \Think\Model {
         $row['is_hot']  = ($row['goods_status'] & 4) ? 1 : 0;
         $row['content'] = M('GoodsIntro')->getFieldByGoodsId($goods_id, 'content');
         $row['paths']= M('GoodsGallery')->field('id,path')->where(array('goods_id'=>$goods_id))->select();
+        $row['member_prices']= M('MemberGoodsPrice')->where(array('goods_id'=>$goods_id))->getField('member_level_id,price');
+        
         return $row;
     }
 
@@ -173,6 +182,13 @@ class GoodsModel extends \Think\Model {
         //执行相册的保存
         if ($this->_addGallery($request_data['id']) === false) {
             $this->error = '保存相册图片失败';
+            $this->rollback();
+            return false;
+        }
+        
+        //执行会员价格的保存
+        if ($this->_addMemberPrice($request_data['id']) === false) {
+            $this->error = '保存会员价失败';
             $this->rollback();
             return false;
         }
@@ -228,4 +244,33 @@ class GoodsModel extends \Think\Model {
         return true;
     }
 
+    /**
+     * 保存会员价
+     * 先删除原有的，再添加
+     * @param type $goods_id
+     * @return boolean
+     */
+    private function _addMemberPrice($goods_id) {
+        $model= M('MemberGoodsPrice');
+        $model->where('goods_id='.$goods_id)->delete();
+        
+        $member_prices = I('post.ml');
+        $data = array();
+        foreach($member_prices as $key=>$value){
+            if(empty($value)){
+                continue;
+            }
+            $data[] = array(
+                'goods_id'=>$goods_id,
+                'member_level_id'=>$key,
+                'price'=>$value,
+            );
+        }
+        if(empty($data)){
+            return true;
+        }
+        return $model->addAll($data);
+//        var_dump($data);
+//        exit;
+    }
 }

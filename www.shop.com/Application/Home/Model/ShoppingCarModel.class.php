@@ -58,11 +58,11 @@ class ShoppingCarModel extends \Think\Model {
     public function changeAmount($goods_id, $amount) {
         $userinfo = login();
         if ($userinfo) {
+            $cond = array(
+                'goods_id'  => $goods_id,
+                'member_id' => $userinfo['id'],
+            );
             if ($amount) {
-                $cond = array(
-                    'goods_id'  => $goods_id,
-                    'member_id' => $userinfo['id'],
-                );
                 $this->where($cond)->setField('amount', $amount);
             } else {
                 $this->where($cond)->delete();
@@ -90,8 +90,14 @@ class ShoppingCarModel extends \Think\Model {
                 'member_id' => $userinfo['id'],
             );
             $car_list = $model->where($cond)->getField('goods_id,amount');
+            
+            $cond = array(
+                'id'=>$userinfo['id'],
+            );
+            $score = M('Member')->where($cond)->getField('score');
         } else {
             $car_list    = shoppingcar();
+            $score = 0;
         }
         
         $goods_ids   = array_keys($car_list);
@@ -102,6 +108,30 @@ class ShoppingCarModel extends \Think\Model {
             //获取商品的基本信息
             $model      = D('Goods');
             $goods_list = $model->getShoppingCarInfo($goods_ids);
+            //取出会员价格
+            $cond = array(
+                'bottom'=>array('elt',$score),
+                'top'=>array('egt',$score),
+                'status'=>1,
+            );
+            $member_level = M('MemberLevel')->where($cond)->field('id,discount')->find();
+//            $member_level =['id'=>3,'discount'=>80];
+            $price = 0;
+            foreach($goods_list as $key=>$value){
+                $cond = array(
+                    'member_level_id'=>$member_level['id'],
+                    'goods_id'=>$value['id'],
+                );
+                //会员价格表
+                $price = M('MemberGoodsPrice')->where($cond)->getField('price');
+                if(empty($price)){
+                    $price = $member_level['discount'] * $value['shop_price']/100;
+                }
+                
+                $goods_list[$key]['shop_price'] = $price;
+            }
+            
+            
             //展示
             foreach ($goods_list as $key => $value) {
                 $value['shop_price'] = my_num_format($value['shop_price']);
