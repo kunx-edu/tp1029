@@ -128,11 +128,9 @@ class ShoppingCarModel extends \Think\Model {
                 if(empty($price)){
                     $price = $member_level['discount'] * $value['shop_price']/100;
                 }
-                
-                $goods_list[$key]['shop_price'] = $price;
                 //获取会员价格结束
                 
-                $value['shop_price'] = my_num_format($value['shop_price']);
+                $value['shop_price'] = my_num_format($price);
                 $value['amount']     = $car_list[$value['id']];
                 $value['sub_total']  = my_num_format($car_list[$value['id']] * $value['shop_price']);
                 $total_price         = $total_price + $value['sub_total'];
