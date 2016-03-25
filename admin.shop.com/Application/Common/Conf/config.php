@@ -28,6 +28,7 @@ return array(
     'DB_FIELDS_CACHE'   => false, // 启用字段缓存
     'DB_CHARSET'        => 'utf8', // 数据库编码默认采用utf8
     'PAGE_SIZE'         => 20, //每页显示多少个
+    'PAGE_THEAM'        => '%HEADER% %FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END%',
     'UPLOAD_SETTING'    => array(
 //        'mimes'        => array('image/jpeg', 'image/png', 'image/gif'), //允许上传的文件MiMe类型
         'maxSize'      => 1048576, //上传的文件大小限制 (0-不做限制)
@@ -57,7 +58,7 @@ return array(
         ), // 上传驱动配置
     ),
     'TMPL_CACHE_ON'     => false,
-    'ACCESS_ACTIONS'     => array(
+    'ACCESS_ACTIONS'    => array(
         'Admin/Admin/login',
         'Admin/Admin/logout',
         'Admin/Verify/verify',

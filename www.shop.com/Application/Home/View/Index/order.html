@@ -79,14 +79,18 @@
                     <foreach name="rows" item="row">
                         <tr>
                             <td><a href="">{$row.sn}</a></td>
-                            <td><a href=""><img src="__IMG__/order1.jpg" alt="" /></a></td>
+                            <td>
+                            <foreach name="row.goods_list" item="goods">
+                                <a href="{:U('Index/goods',array('id'=>$key))}"><img src="{$goods}" alt="" /></a>
+                            </foreach>
+                            </td>
                             <td>{$row.name}</td>
                             <td>{$row['total_price']} {$row.payment_name}</td>
                             <td>{$row.inputtime|date="Y-m-d H:i:s",###}</td>
                             <td>{$row.status_name}</td>
                             <td>
                                 <eq name='row.status' value='1'>
-                                <a href="{:U('Payment/alipay',array('id'=>$row['id']))}">支付</a> |
+                                <a href="{:U('Payment/alipay2',array('id'=>$row['id']))}">支付</a> |
                                 </eq>
                                 <a href="">查看</a> |
                                 <a href="">删除</a>

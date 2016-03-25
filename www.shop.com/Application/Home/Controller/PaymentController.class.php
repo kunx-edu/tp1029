@@ -14,18 +14,18 @@ class PaymentController extends \Think\Controller {
         //合作身份者id，以2088开头的16位纯数字
         $alipay_config['partner'] = '2088002155956432';
 
-//收款支付宝账号，一般情况下收款账号就是签约账号
+        //收款支付宝账号，一般情况下收款账号就是签约账号
         $alipay_config['seller_email'] = 'guoguanzhao520@163.com';
 
-//安全检验码，以数字和字母组成的32位字符
+        //安全检验码，以数字和字母组成的32位字符
         $alipay_config['key'] = 'a0csaesgzhpmiiguif2j6elkyhlvf4t9';
 
 
-//↑↑↑↑↑↑↑↑↑↑请在这里配置您的基本信息↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-//签名方式 不需修改
+        //↑↑↑↑↑↑↑↑↑↑请在这里配置您的基本信息↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+        //签名方式 不需修改
         $alipay_config['sign_type'] = strtoupper('MD5');
 
-//字符编码格式 目前支持 gbk 或 utf-8
+        //字符编码格式 目前支持 gbk 或 utf-8
         $alipay_config['input_charset'] = strtolower('utf-8');
 
         //ca证书路径地址，用于curl中ssl校验
@@ -37,7 +37,7 @@ class PaymentController extends \Think\Controller {
 
         
 
-        /*         * ************************请求参数************************* */
+        /** ************************请求参数************************* */
 
         //支付类型
         $payment_type      = "1";
@@ -94,9 +94,9 @@ class PaymentController extends \Think\Controller {
         //如：13312341234
 
 
-        /*         * ********************************************************* */
+        /** ********************************************************* */
 
-//构造要请求的参数数组，无需改动
+        //构造要请求的参数数组，无需改动
         $parameter = array(
             "service"           => "create_partner_trade_by_buyer",
             "partner"           => trim($alipay_config['partner']),
@@ -121,11 +121,23 @@ class PaymentController extends \Think\Controller {
             "_input_charset"    => trim(strtolower($alipay_config['input_charset']))
         );
 
-//建立请求
+        //建立请求
         vendor('Alipay.alipay_submit#class');
         $alipaySubmit = new \AlipaySubmit($alipay_config);
         $html_text    = $alipaySubmit->buildRequestForm($parameter, "get", "确认");
         echo $html_text;
+    }
+    
+    public function alipay2($id){
+        $cond = array(
+            'status'=>1,
+            'id'=>$id,
+        );
+        if(M('OrderInfo')->where($cond)->setField('status',2)){
+            $this->success('付款成功，等待商家发货');
+        }else{
+            $this->error(M('OrderInfo')->getError());
+        }
     }
 
 }

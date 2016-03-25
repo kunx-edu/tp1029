@@ -166,7 +166,10 @@ class OrderInfoModel extends \Think\Model {
         return M('Invoice')->add($data);
     }
     
-    
+    /**
+     * 获取订单列表
+     * @return array
+     */
     public function getPageResult(){
         $userinfo = login();
         $cond = array(
@@ -176,11 +179,16 @@ class OrderInfoModel extends \Think\Model {
         //获取所有的支付类型
         $payment_list = M('Payment')->getField('id,name');
         $rows = $this->where($cond)->order('inputtime desc')->page(I('get.p',1),C('PAGE_SIZE'))->select();
+        //获取到每个订单中商品的logo列表
         foreach($rows as $key=>$value){
             $value['total_price'] = my_num_format($value['price']+$value['delivery_price']);
             $value['payment_name'] = $payment_list[$value['pay_type']];
             $value['status_name'] = self::$statuses[$value['status']];
+            //取出订单详情
+            $order_info_items = M('OrderInfoItem')->where('order_info_id='.$value['id'])->getField('goods_id,logo');
+            $value['goods_list'] = $order_info_items;
             $rows[$key] = $value;
+            
         }
         return $rows;
     }
