@@ -311,4 +311,29 @@ class OrderInfoModel extends \Think\Model {
      * 3.订单创建完成，将商品id从redis中移除
      */
 
+    
+    public function cleanTimeoutOrder(){
+        //1.查询出来超时的订单
+        $cond = array(
+            'status'=>1,
+            'inputtime'=>array('lt',NOW_TIME-900),//15分钟超时
+        );
+        $invoice = M('Invoice');
+        $order_list = $this->where($cond)->getField('id,invoice_id');
+        //4.废除发票
+        $invoice_ids = array_values($order_list);
+        $invoice->where(array('id'=>array('in',$invoice_ids)))->setField('status',0);
+        
+        //2.将订单的详情查出来
+        $order_ids = array_keys($order_list);
+        $order_info_items = M('OrderInfoItem')->where(array('order_info_id'=>array('in',$order_ids)))->getField('id,goods_id,amount');
+        
+        //3.更改商品的库存
+        $model = M('Goods');
+        foreach($order_info_items as $goods_info){
+            $cond = array('id'=>$goods_info['goods_id']);
+            $model->where($cond)->setInc('stock',$goods_info['amount']);
+        }
+        
+    }
 }
