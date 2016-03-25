@@ -19,7 +19,7 @@ class OrderInfoModel extends \Think\Model {
         0 => '已关闭',
         1 => '待支付',
         2 => '待发货',
-        3 => '待确认',
+        3 => '待收货',
         4 => '已完成',
     );
     

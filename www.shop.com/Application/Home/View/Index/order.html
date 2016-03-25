@@ -89,9 +89,11 @@
                             <td>{$row.inputtime|date="Y-m-d H:i:s",###}</td>
                             <td>{$row.status_name}</td>
                             <td>
-                                <eq name='row.status' value='1'>
+                                <if condition='$row.status eq 1'>
                                 <a href="{:U('Payment/alipay2',array('id'=>$row['id']))}">支付</a> |
-                                </eq>
+                                <elseif condition='$row.status eq 3'/>
+                                    <a href="{:U('Index/confirm',array('id'=>$row['id']))}">确认收货</a> |
+                                </if>
                                 <a href="">查看</a> |
                                 <a href="">删除</a>
                             </td>

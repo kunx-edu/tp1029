@@ -54,8 +54,10 @@
                             <td align="center"><span onclick="">{$row['delivery_name']}</span></td>
                             <td align="center"><span onclick="">{$statuses[$row['status']]}</span></td>
                             <td align="center">
-                                <a href="{:U('edit',array('id'=>$row['id']))}" title="编辑"><img src="__IMG__/icon_edit.gif" width="16" height="16" border="0" /></a>
-                                <a href="{:U('delete',array('id'=>$row['id']))}" onclick="" title="回收站"><img src="__IMG__/icon_trash.gif" width="16" height="16" border="0" /></a></td>
+                                <eq name='row.status' value='2'>
+                                    <a href="{:U('send',array('id'=>$row['id']))}" title="发货">发货</a>
+                                </eq>
+                                <a href="{:U('delete',array('id'=>$row['id']))}" onclick="" title="回收站">删除</a></td>
                         </tr>
                     </foreach>
                 </table>

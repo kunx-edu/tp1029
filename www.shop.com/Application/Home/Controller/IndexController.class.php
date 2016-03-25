@@ -219,4 +219,18 @@ class IndexController extends Controller {
         $this->assign('rows',$model->getPageResult());
         $this->display('order');
     }
+    
+    
+    public function confirm($id){
+        $cond = array(
+            'status'=>3,
+            'id'=>$id,
+        );
+        $model = M('OrderInfo');
+        if($model->where($cond)->setField('status',4)===false){
+            $this->error($model->getError());
+        }else{
+            $this->success('收货成功,请评价',U('orderList'));
+        }
+    }
 }
