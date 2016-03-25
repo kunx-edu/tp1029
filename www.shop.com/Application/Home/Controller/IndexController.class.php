@@ -220,7 +220,10 @@ class IndexController extends Controller {
         $this->display('order');
     }
     
-    
+    /**
+     * 确认收货
+     * @param type $id
+     */
     public function confirm($id){
         $cond = array(
             'status'=>3,
