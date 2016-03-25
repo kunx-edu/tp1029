@@ -178,7 +178,7 @@ class IndexController extends Controller {
 
     
     /**
-     * 填写订单信息
+     * 填写订单信息。
      */
     public function flow2(){
         //判断是否登录，没有登录就跳转到登录页面，并且登陆后跳转回来
@@ -208,12 +208,16 @@ class IndexController extends Controller {
         $model->changeAmount($goods_id,$amount);
     }
 
-    
+    /**
+     * 订单创建成功提示。
+     */
     public function flow3(){
         $this->display();
     }
     
-    
+    /**
+     * 订单列表
+     */
     public function orderList(){
         $model = D('OrderInfo');
         $this->assign('rows',$model->getPageResult());

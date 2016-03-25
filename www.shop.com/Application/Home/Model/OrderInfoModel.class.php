@@ -16,6 +16,13 @@ class OrderInfoModel extends \Think\Model {
         $userinfo          = login();
         $shopping_car_info = D('ShoppingCar')->getShoppingCarInfo();
 
+        
+        //更新库存
+        if($this->_refreshStock($shopping_car_info)===false){
+            $this->rollback();
+            return false;
+        }
+        
         $address_id   = I('post.address_id');
         $address_info = M('Address')->find($address_id);
         //保存订单基本信息
@@ -193,4 +200,38 @@ class OrderInfoModel extends \Think\Model {
         return $rows;
     }
 
+    
+    /**
+     * 更新库存数据
+     * @param type $order_id
+     * @param type $shopping_car_info
+     * @return type
+     */
+    private function _refreshStock($shopping_car_info) {
+        foreach ($shopping_car_info['goods_list'] as $item) {
+            //查出所有的商品库存，如果发现库存不够，就返回false
+            $cond = array(
+                'id'=>$item['id'],
+                'stock'=>array('egt',$item['amount']),
+            );
+            //where id=111 and stock>=5
+            if(!$stock = M('Goods')->where($cond)->count()){
+                $this->error = '库存不够';
+                return false;
+            }
+        }
+        //修改所购买商品的库存
+        foreach ($shopping_car_info['goods_list'] as $item) {
+            //查出所有的商品库存，如果发现库存不够，就返回false
+            $cond = array(
+                'id'=>$item['id'],
+            );
+            //where id=111 and stock>=5
+            if(M('Goods')->where($cond)->setDec('stock',$item['amount'])===false){
+                $this->error = '扣库存失败';
+                return false;
+            }
+        }
+        return true;
+    }
 }
